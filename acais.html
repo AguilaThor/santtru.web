@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Açaís — Santtru</title>
+<link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@300;400;600;700;900&family=Poppins:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+
+:root{
+  --pink:    #f3afcd;
+  --pink-d:  #e896bc;
+  --dark:    #1e1e1e;
+  --cream:   #f8f6f5;
+  --burg:    #751438;
+  --white:   #ffffff;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  background: var(--dark);
+  color: var(--dark);
+  font-family: 'Poppins', sans-serif;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ── CURSOR ─────────────────────────── */
+#cur { position:fixed;width:10px;height:10px;background:var(--pink);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .3s,height .3s,background .3s; }
+#cur-r { position:fixed;width:36px;height:36px;border:1.5px solid rgba(243,175,205,.5);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .3s,height .3s; }
+
+/* ── NAV ────────────────────────────── */
+nav {
+  position: fixed; top:0; left:0; right:0; z-index:300;
+  padding: 1.4rem 3rem;
+  display: flex; justify-content:space-between; align-items:center;
+}
+nav::before {
+  content:''; position:absolute; inset:0;
+  background: linear-gradient(to bottom, rgba(20,20,20,.95) 0%, transparent 100%);
+  pointer-events: none;
+}
+.logo {
+  text-decoration: none; position: relative; display:flex; align-items:center;
+}
+.logo img { height:2rem; width:auto; filter:invert(79%) sepia(22%) saturate(598%) hue-rotate(292deg) brightness(105%) contrast(96%); transition:opacity .3s; }
+.logo:hover img { opacity:.75; }
+.nav-links { display:flex; gap:2.2rem; list-style:none; }
+.nav-links a { font-size:.68rem; letter-spacing:.18em; text-transform:uppercase; color:rgba(248,246,245,.5); text-decoration:none; transition:color .3s; font-weight:400; }
+.nav-links a:hover { color:var(--white); }
+.nav-links a.active { color:var(--white); }
+.nav-burger { display:none; flex-direction:column; justify-content:center; gap:5px; width:28px; height:28px; background:none; border:none; cursor:none; position:relative; z-index:2; padding:0; }
+.nav-burger span { display:block; height:1.5px; width:100%; background:var(--white); border-radius:2px; transition:transform .35s,opacity .35s; transform-origin:center; }
+.nav-burger.open span:nth-child(1) { transform:translateY(6.5px) rotate(45deg); }
+.nav-burger.open span:nth-child(2) { opacity:0; transform:scaleX(0); }
+.nav-burger.open span:nth-child(3) { transform:translateY(-6.5px) rotate(-45deg); }
+.mobile-menu { display:none; position:fixed; inset:0; z-index:200; background:rgba(18,18,18,.97); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); flex-direction:column; align-items:center; justify-content:center; gap:2.5rem; opacity:0; pointer-events:none; transition:opacity .35s; }
+.mobile-menu.open { opacity:1; pointer-events:auto; }
+.mobile-menu a { font-family:'League Spartan',sans-serif; font-weight:700; font-size:clamp(1.8rem,7vw,3rem); letter-spacing:.08em; text-transform:uppercase; text-decoration:none; color:rgba(248,246,245,.55); transition:color .3s; }
+.mobile-menu a:hover { color:var(--white); }
+.mobile-menu .mm-sub { font-size:.7rem; letter-spacing:.2em; text-transform:uppercase; color:rgba(248,246,245,.2); margin-top:2rem; }
+
+/* ── PAGE HERO ──────────────────────── */
+.page-hero {
+  background: var(--dark);
+  padding: 12rem 3rem 5rem;
+  position: relative;
+  overflow: hidden;
+}
+.page-hero::after {
+  content:'';
+  position:absolute; inset:0; z-index:0;
+  background: url('acai-hero.jpg') center 30% / cover no-repeat;
+  opacity:.35;
+  pointer-events:none;
+}
+.page-hero-inner { position:relative; z-index:1; }
+.page-hero-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 2rem;
+}
+.page-hero-text .tag-label {
+  font-size:.63rem; letter-spacing:.3em; text-transform:uppercase;
+  color:var(--pink); font-weight:600; display:block; margin-bottom:1.2rem;
+}
+.page-hero-text h1 {
+  font-family: 'League Spartan', sans-serif; font-weight:900;
+  font-size: clamp(3.5rem,9vw,9rem); line-height:.9;
+  color: var(--white); text-transform: uppercase;
+}
+.page-hero-text h1 .pk { color:var(--pink); }
+
+/* sub-nav between products */
+.product-subnav {
+  display: flex; gap: .4rem;
+  align-items: flex-end;
+  padding-bottom: .4rem;
+}
+.product-subnav a {
+  font-family: 'League Spartan', sans-serif; font-weight:700;
+  font-size: .72rem; letter-spacing: .18em; text-transform: uppercase;
+  text-decoration: none;
+  padding: .6rem 1.6rem;
+  border-radius: 100px;
+  border: 1.5px solid rgba(248,246,245,.12);
+  color: rgba(248,246,245,.4);
+  transition: all .3s;
+}
+.product-subnav a:hover { border-color:rgba(243,175,205,.4); color:rgba(248,246,245,.8); }
+.product-subnav a.active { background:var(--pink); border-color:var(--pink); color:var(--dark); }
+
+/* ── BOWL SECTION ───────────────────── */
+.bowl-section {
+  background: url('fondo-acais.jpg') center/cover fixed;
+  margin-top: -2px;
+  padding: 5rem 3rem 8rem;
+  position: relative; overflow:hidden;
+}
+.bowl-section::before {
+  content:'AÇAÍ';
+  font-family:'League Spartan',sans-serif;font-weight:900;
+  font-size:22vw;color:rgba(243,175,205,.15);
+  position:absolute;top:2rem;left:50%;transform:translateX(-50%);
+  white-space:nowrap;pointer-events:none;letter-spacing:-.03em;
+}
+.bowl-sec-head {
+  text-align:center;margin-bottom:3.5rem;position:relative;
+}
+.bowl-sec-head .tag-label { color:var(--pink-d); margin-bottom:.8rem; font-size:.63rem; letter-spacing:.3em; text-transform:uppercase; font-weight:600; display:block; }
+.bowl-sec-head h2 {
+  font-family:'League Spartan',sans-serif;font-weight:900;
+  font-size:clamp(2.8rem,7vw,6.5rem);text-transform:uppercase;
+  color:var(--dark);line-height:.92;
+}
+.bowl-sec-head h2 .pk { color:var(--pink-d); }
+.bowl-sec-head p { font-size:.85rem;color:rgba(30,30,30,.45);margin-top:1rem;font-weight:300;max-width:460px;margin-inline:auto; }
+
+/* tabs */
+.bowl-tabs { display:flex;justify-content:center;gap:.6rem;margin-bottom:4rem; }
+.bowl-tab {
+  display:flex;align-items:center;gap:.7rem;
+  background:rgba(255,255,255,.5);
+  border:1.5px solid rgba(30,30,30,.12);
+  color:rgba(30,30,30,.45);
+  padding:.9rem 2.4rem;border-radius:100px;
+  font-family:'League Spartan',sans-serif;font-weight:700;
+  font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;
+  cursor:none;transition:all .35s;
+}
+.bowl-tab:hover:not(.on) { border-color:var(--pink-d);color:var(--dark); }
+.bowl-tab.on { background:var(--dark);border-color:var(--dark);color:var(--white); }
+.bowl-tab .tab-icon { font-size:1.1rem; }
+.bowl-pane { display:none; }
+.bowl-pane.on { display:block; }
+
+/* CREA EL TUYO */
+.build-sizes { display:flex;justify-content:center;gap:1.5rem;margin-bottom:3.5rem;flex-wrap:wrap; }
+.build-size-card {
+  flex:1;max-width:340px;min-width:240px;
+  background:rgba(255,255,255,.75);
+  border:1.5px solid rgba(30,30,30,.08);
+  border-radius:8px;padding:2.2rem 2.5rem;
+  transition:border-color .3s,background .3s;
+  position:relative;overflow:hidden;
+  backdrop-filter:blur(6px);
+}
+.build-size-card:hover { border-color:var(--pink);background:rgba(255,255,255,.9); }
+.build-size-card::after {
+  content:attr(data-letter);
+  font-family:'League Spartan',sans-serif;font-weight:900;
+  font-size:9rem;color:rgba(243,175,205,.12);
+  position:absolute;right:-1rem;bottom:-2rem;line-height:1;pointer-events:none;
+}
+.bsc-top { display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.4rem; }
+.bsc-name { font-family:'League Spartan',sans-serif;font-weight:900;font-size:2rem;text-transform:uppercase;color:var(--dark); }
+.bsc-price { font-family:'League Spartan',sans-serif;font-weight:900;font-size:2.2rem;color:var(--pink-d);line-height:1; }
+.bsc-price span { font-size:.75rem;font-weight:400;color:rgba(30,30,30,.35);display:block;letter-spacing:.1em;text-transform:uppercase;margin-top:.1rem;text-align:right; }
+.bsc-toppings-badge { display:inline-flex;align-items:center;gap:.5rem;border:1px solid rgba(232,150,188,.4);padding:.35rem 1rem;border-radius:100px;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--pink-d);font-weight:600;margin-bottom:1.2rem; }
+.bsc-desc { font-size:.8rem;color:rgba(30,30,30,.45);font-weight:300;line-height:1.7; }
+
+.build-toppings {
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:1.5px;background:rgba(30,30,30,.06);
+  max-width:1100px;margin:0 auto;
+  border:1.5px solid rgba(30,30,30,.06);border-radius:4px;overflow:hidden;
+}
+.build-cat { background:rgba(255,255,255,.75);padding:2rem 1.6rem;transition:background .3s;backdrop-filter:blur(4px); }
+.build-cat:hover { background:rgba(255,255,255,.92); }
+.build-cat-title { font-family:'League Spartan',sans-serif;font-weight:700;font-size:.8rem;text-transform:uppercase;color:var(--pink-d);margin-bottom:1rem;letter-spacing:.1em; }
+.build-list { list-style:none; }
+.build-list li { font-size:.78rem;color:rgba(30,30,30,.6);padding:.3rem 0;border-bottom:1px solid rgba(30,30,30,.06);font-weight:300; }
+.build-list li:last-child { border-bottom:none; }
+.build-list li .extra { color:var(--pink-d);font-size:.68rem; }
+.build-extra-note { text-align:center;margin-top:1.2rem;font-size:.72rem;color:rgba(30,30,30,.3);font-style:italic; }
+
+/* ELIGE EL TUYO */
+.menu-grid { display:grid;grid-template-columns:repeat(4,1fr);gap:1.8rem;max-width:1200px;margin:0 auto; }
+.menu-card {
+  background:#fff;
+  border:1px solid rgba(30,30,30,.06);
+  border-radius:12px;overflow:hidden;
+  transition:transform .4s,box-shadow .4s,border-color .4s;
+  cursor:none;
+  box-shadow: 0 4px 24px rgba(0,0,0,.08), 0 1px 4px rgba(0,0,0,.04);
+}
+.menu-card:hover { transform:translateY(-8px);box-shadow:0 20px 50px rgba(0,0,0,.14),0 2px 8px rgba(0,0,0,.06);border-color:rgba(243,175,205,.5); }
+.menu-img { height:260px;overflow:hidden;background:#f9f6f4; }
+.menu-img img { width:100%;height:100%;object-fit:cover;object-position:center 40%;transition:transform .5s;will-change:transform; }
+.menu-card:hover .menu-img img { transform:scale(1.08); }
+.menu-body { padding:1.2rem 1.4rem 1rem;border-top:1px solid rgba(30,30,30,.05); }
+.menu-name { font-family:'League Spartan',sans-serif;font-weight:700;font-size:1.05rem;text-transform:uppercase;color:var(--dark);margin-bottom:.3rem; }
+.menu-prices { font-family:'League Spartan',sans-serif;font-weight:700;font-size:.78rem;color:var(--pink-d);letter-spacing:.04em; }
+.menu-prices span { color:rgba(30,30,30,.25);margin:0 .3rem; }
+
+/* ── FOOTER ─────────────────────────── */
+footer {
+  background:var(--dark);padding:2.5rem 3rem;
+  display:flex;justify-content:space-between;align-items:center;
+  border-top:1px solid rgba(248,246,245,.05);
+}
+.footer-logo-img { height:1.4rem;width:auto;filter:brightness(0) invert(1);opacity:.55; }
+.footer-copy { font-size:.7rem;color:rgba(248,246,245,.22);letter-spacing:.08em; }
+.footer-ig { font-size:.7rem;color:rgba(248,246,245,.38);letter-spacing:.08em;text-decoration:none;transition:color .3s; }
+.footer-ig:hover { color:var(--pink); }
+
+/* ── REVEAL ──────────────────────────── */
+.rv { opacity:0;transform:translateY(28px);transition:opacity .9s,transform .9s; }
+.rv.on { opacity:1;transform:translateY(0); }
+.rv1 { transition-delay:.15s; }
+.rv2 { transition-delay:.3s; }
+.rv3 { transition-delay:.45s; }
+
+/* ── MOBILE ──────────────────────────── */
+@media(max-width:900px) {
+  nav { padding:1.2rem 1.5rem; }
+  .nav-links { display:none; }
+  .nav-burger { display:flex; }
+  .mobile-menu { display:flex; }
+  .bowl-section { padding:4rem 1.5rem 6rem; }
+  .build-toppings { grid-template-columns:1fr 1fr; }
+  .menu-grid { grid-template-columns:repeat(2,1fr); }
+  footer { flex-direction:column;gap:1rem;text-align:center; }
+  .page-hero { padding:10rem 1.5rem 4rem; }
+  .page-hero-inner { flex-direction:column; align-items:flex-start; }
+}
+@media(max-width:600px) {
+  .menu-grid { grid-template-columns:1fr 1fr; }
+  .build-toppings { grid-template-columns:1fr; }
+  .build-sizes { flex-direction:column; }
+}
+</style>
+</head>
+<body>
+
+<div id="cur"></div>
+<div id="cur-r"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="logo"><img src="logo.png" alt="Santtru"></a>
+  <ul class="nav-links">
+    <li><a href="index.html#nosotros">Nosotros</a></li>
+    <li><a href="acais.html" class="active">Producto</a></li>
+    <li><a href="#">Localización</a></li>
+    <li><a href="#">Catering</a></li>
+  </ul>
+  <button class="nav-burger" id="burger" aria-label="Menú">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html#nosotros" onclick="closeMobileMenu()">Nosotros</a>
+  <a href="acais.html" onclick="closeMobileMenu()">Producto</a>
+  <a href="#" onclick="closeMobileMenu()">Localización</a>
+  <a href="#" onclick="closeMobileMenu()">Catering</a>
+  <span class="mm-sub">@santtru.club</span>
+</div>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <div class="page-hero-text">
+      <span class="tag-label">Producto</span>
+      <h1>NUESTROS<br><span class="pk">AÇAÍS</span></h1>
+    </div>
+    <div class="product-subnav">
+      <a href="acais.html" class="active">Açaís</a>
+      <a href="bebidas.html">Bebidas</a>
+    </div>
+  </div>
+</section>
+
+<!-- BOWL CONTENT -->
+<section class="bowl-section" id="crea">
+
+  <div class="bowl-sec-head rv">
+    <span class="tag-label">Personaliza tu experiencia</span>
+    <h2>TU AÇAÍ<br><span class="pk">BOWL</span></h2>
+    <p>Créalo a tu manera o elige uno de nuestros clásicos</p>
+  </div>
+
+  <div class="bowl-tabs rv">
+    <button class="bowl-tab on" onclick="switchBowlTab('menu',this)">
+      <span class="tab-icon">◈</span> Elige el tuyo
+    </button>
+    <button class="bowl-tab" onclick="switchBowlTab('build',this)">
+      <span class="tab-icon">✦</span> Crea el tuyo
+    </button>
+  </div>
+
+  <!-- PANE: Elige el tuyo -->
+  <div class="bowl-pane on" id="bp-menu">
+    <div class="menu-grid">
+      <div class="menu-card rv">
+        <div class="menu-img"><img src="bowls/balance.jpg" alt="Balance" loading="lazy" decoding="async"></div>
+        <div class="menu-body">
+          <div class="menu-name">Balance</div>
+          <div class="menu-prices">M €8,10 <span>·</span> G €10,50</div>
+        </div>
+      </div>
+      <div class="menu-card rv rv1">
+        <div class="menu-img"><img src="bowls/bora bora.jpg" alt="Bora Bora" loading="lazy" decoding="async"></div>
+        <div class="menu-body">
+          <div class="menu-name">Bora Bora</div>
+          <div class="menu-prices">M €8,10 <span>·</span> G €10,50</div>
+        </div>
+      </div>
+      <div class="menu-card rv rv2">
+        <div class="menu-img"><img src="bowls/brasileiro.jpg" alt="Brasileiro" loading="lazy" decoding="async"></div>
+        <div class="menu-body">
+          <div class="menu-name">Brasileiro</div>
+          <div class="menu-prices">M €8,10 <span>·</span> G €10,50</div>
+        </div>
+      </div>
+      <div class="menu-card rv rv3">
+        <div class="menu-img"><img src="bowls/dubai.jpg" alt="Dubai" loading="lazy" decoding="async"></div>
+        <div class="menu-body">
+          <div class="menu-name">Dubai</div>
+          <div class="menu-prices">M €8,10 <span>·</span> G €10,50</div>
+        </div>
+      </div>
+      <div class="menu-card rv">
+        <div class="menu-img"><img src="bowls/gymbro.jpg" alt="Gym Bro" loading="lazy" decoding="async"></div>
+        <div class="menu-body">
+          <div class="menu-name">Gym Bro</div>
+          <div class="menu-prices">M €8,10 <span>·</span> G €10,50</div>
+        </div>
+      </div>
+      <div class="menu-card rv rv1">
+        <div class="menu-img"><img src="bowls/low calorie.jpg" alt="Low Calorie" loading="lazy" decoding="async"></div>
+        <div class="menu-body">
+          <div class="menu-name">Low Calorie</div>
+          <div class="menu-prices">M €8,10 <span>·</span> G €10,50</div>
+        </div>
+      </div>
+      <div class="menu-card rv rv2">
+        <div class="menu-img"><img src="bowls/sweet boom.jpg" alt="Sweet Boom" loading="lazy" decoding="async"></div>
+        <div class="menu-body">
+          <div class="menu-name">Sweet Boom</div>
+          <div class="menu-prices">M €8,10 <span>·</span> G €10,50</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANE: Crea el tuyo -->
+  <div class="bowl-pane" id="bp-build">
+    <div class="build-sizes">
+      <div class="build-size-card rv" data-letter="M">
+        <div class="bsc-top">
+          <div class="bsc-name">Mediano</div>
+          <div class="bsc-price">7€<span>por bowl</span></div>
+        </div>
+        <div class="bsc-toppings-badge">✦ 3 toppings incluidos</div>
+        <p class="bsc-desc">El tamaño perfecto para empezar el día o recargar después de entrenar. Elige tu base de açaí y combina 3 toppings a tu gusto.</p>
+      </div>
+      <div class="build-size-card rv rv1" data-letter="G">
+        <div class="bsc-top">
+          <div class="bsc-name">Grande</div>
+          <div class="bsc-price">9,90€<span>por bowl</span></div>
+        </div>
+        <div class="bsc-toppings-badge">✦ 4 toppings incluidos</div>
+        <p class="bsc-desc">Para los que no se conforman con poco. Base de açaí generosa con 4 toppings a elegir entre toda nuestra selección.</p>
+      </div>
+    </div>
+    <div class="build-toppings rv">
+      <div class="build-cat">
+        <div class="build-cat-title">Fruta Fresca</div>
+        <ul class="build-list">
+          <li>Kiwi</li><li>Coco</li><li>Fresas</li>
+          <li>Mango</li><li>Plátano</li>
+          <li>Arándanos <span class="extra">+1€</span></li>
+        </ul>
+      </div>
+      <div class="build-cat">
+        <div class="build-cat-title">Crunchy Top</div>
+        <ul class="build-list">
+          <li>Semillas de Chia</li><li>Semillas de Girasol</li>
+          <li>Granola Tradicional</li><li>Granola Fit</li>
+          <li>Chispas Choc. Negro</li><li>Chispas Choc. Blanco</li>
+        </ul>
+      </div>
+      <div class="build-cat">
+        <div class="build-cat-title">Originales</div>
+        <ul class="build-list">
+          <li>Leche en Polvo</li><li>Pudding de Chia</li>
+          <li>Yogur Griego</li><li>Almendras Laminadas</li>
+          <li>Pudding Chia Matcha</li>
+          <li>Proteína Vegana <span class="extra">+1€</span></li>
+        </ul>
+      </div>
+      <div class="build-cat">
+        <div class="build-cat-title">Creamy Top</div>
+        <ul class="build-list">
+          <li>Nutella</li><li>Crema de Lotus</li>
+          <li>Leche Condensada</li><li>Mant. de Cacahuete</li>
+          <li>Crema de Pistacho <span class="extra">+1€</span></li>
+        </ul>
+      </div>
+    </div>
+    <p class="build-extra-note rv">Extra toppings: €0,80 c/u</p>
+  </div>
+
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <img src="logo.png" alt="Santtru" class="footer-logo-img">
+  <span class="footer-copy">© 2026 Santtru · Sant Cugat del Vallès</span>
+  <a href="https://instagram.com/santtru.club" class="footer-ig">@santtru.club</a>
+</footer>
+
+<script>
+// HAMBURGER
+const burger=document.getElementById('burger');
+const mobileMenu=document.getElementById('mobileMenu');
+burger.addEventListener('click',()=>{ burger.classList.toggle('open'); mobileMenu.classList.toggle('open'); document.body.style.overflow=mobileMenu.classList.contains('open')?'hidden':''; });
+function closeMobileMenu(){ burger.classList.remove('open'); mobileMenu.classList.remove('open'); document.body.style.overflow=''; }
+
+// CURSOR
+const cur=document.getElementById('cur');
+const curR=document.getElementById('cur-r');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+(function loop(){rx+=(mx-rx)*.11;ry+=(my-ry)*.11;curR.style.left=rx+'px';curR.style.top=ry+'px';requestAnimationFrame(loop);})();
+document.querySelectorAll('a,button').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cur.style.width='20px';cur.style.height='20px';curR.style.width='52px';curR.style.height='52px';cur.style.background='var(--pink-d)';});
+  el.addEventListener('mouseleave',()=>{cur.style.width='10px';cur.style.height='10px';curR.style.width='36px';curR.style.height='36px';cur.style.background='var(--pink)';});
+});
+
+// REVEAL
+document.querySelectorAll('.rv').forEach(el=>{
+  new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('on');});},{threshold:.08}).observe(el);
+});
+
+// BOWL TABS
+function switchBowlTab(id,btn){
+  document.querySelectorAll('.bowl-pane').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.bowl-tab').forEach(b=>b.classList.remove('on'));
+  document.getElementById('bp-'+id).classList.add('on');
+  btn.classList.add('on');
+}
+</script>
+</body>
+</html>

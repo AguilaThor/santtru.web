@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Catering — Santtru</title>
+<link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@300;400;600;700;900&family=Poppins:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+
+:root{
+  --pink:    #f3afcd;
+  --pink-d:  #e896bc;
+  --dark:    #1e1e1e;
+  --white:   #ffffff;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  background: url('fondo-catering.jpg') center center / cover no-repeat fixed;
+  color: var(--dark);
+  font-family: 'Poppins', sans-serif;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ── CURSOR ─────────────────────────── */
+#cur { position:fixed;width:10px;height:10px;background:var(--pink);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .3s,height .3s,background .3s; }
+#cur-r { position:fixed;width:36px;height:36px;border:1.5px solid rgba(243,175,205,.5);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .3s,height .3s; }
+
+/* ── NAV ────────────────────────────── */
+nav {
+  position: fixed; top:0; left:0; right:0; z-index:300;
+  padding: 1.4rem 3rem;
+  display: flex; justify-content:space-between; align-items:center;
+}
+nav::before {
+  content:''; position:absolute; inset:0;
+  background: linear-gradient(to bottom, rgba(255,255,255,.97) 0%, transparent 100%);
+  pointer-events: none;
+}
+.logo { text-decoration:none; position:relative; display:flex; align-items:center; }
+.logo img {
+  height:2rem; width:auto;
+  filter: invert(79%) sepia(22%) saturate(598%) hue-rotate(292deg) brightness(105%) contrast(96%);
+  transition: opacity .3s;
+}
+.logo:hover img { opacity:.75; }
+.nav-links { display:flex; gap:2.2rem; list-style:none; position:relative; }
+.nav-links a {
+  font-size:.68rem; letter-spacing:.18em; text-transform:uppercase;
+  color:rgba(30,30,30,.45); text-decoration:none; transition:color .3s; font-weight:400;
+}
+.nav-links a:hover { color:var(--dark); }
+.nav-links a.active { color:var(--pink-d); }
+
+/* ── HAMBURGER ───────────────────────── */
+.nav-burger {
+  display:none; flex-direction:column; justify-content:center; gap:5px;
+  width:28px; height:28px; background:none; border:none; cursor:none;
+  position:relative; z-index:2; padding:0;
+}
+.nav-burger span {
+  display:block; height:1.5px; width:100%;
+  background:var(--dark); border-radius:2px;
+  transition:transform .35s, opacity .35s; transform-origin:center;
+}
+.nav-burger.open span:nth-child(1) { transform:translateY(6.5px) rotate(45deg); }
+.nav-burger.open span:nth-child(2) { opacity:0; transform:scaleX(0); }
+.nav-burger.open span:nth-child(3) { transform:translateY(-6.5px) rotate(-45deg); }
+
+/* ── MOBILE MENU ─────────────────────── */
+.mobile-menu {
+  display:none; position:fixed; inset:0; z-index:200;
+  background:rgba(18,18,18,.97); backdrop-filter:blur(12px);
+  flex-direction:column; align-items:center; justify-content:center;
+  gap:2.5rem; opacity:0; pointer-events:none; transition:opacity .35s;
+}
+.mobile-menu.open { opacity:1; pointer-events:auto; }
+.mobile-menu a {
+  font-family:'League Spartan',sans-serif; font-weight:700;
+  font-size:clamp(1.8rem,7vw,3rem); letter-spacing:.08em;
+  text-transform:uppercase; text-decoration:none;
+  color:rgba(248,246,245,.55); transition:color .3s;
+}
+.mobile-menu a:hover { color:var(--white); }
+.mobile-menu .mm-sub {
+  font-size:.7rem; letter-spacing:.2em; text-transform:uppercase;
+  color:rgba(248,246,245,.2); margin-top:2rem;
+}
+
+/* ── MAIN LAYOUT ────────────────────── */
+.cat-wrap {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  min-height: 100vh;
+}
+
+/* — imagen izquierda — */
+.cat-image {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+}
+.cat-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  filter: brightness(.75);
+}
+
+/* — contenido derecha — */
+.cat-content {
+  padding: 9rem 5rem 6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  border-left: 1px solid rgba(30,30,30,.07);
+}
+
+.cat-eyebrow {
+  font-family: 'League Spartan', sans-serif;
+  font-size: .63rem;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--pink-d);
+  display: block;
+}
+.cat-heading {
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 900;
+  font-size: clamp(3rem, 6vw, 6rem);
+  line-height: .9;
+  text-transform: uppercase;
+  letter-spacing: -.03em;
+  color: var(--dark);
+}
+.cat-sub {
+  font-size: .88rem;
+  line-height: 1.85;
+  color: rgba(30,30,30,.5);
+  font-weight: 300;
+  max-width: 440px;
+}
+
+/* — servicios — */
+.cat-services {
+  display: flex;
+  flex-direction: column;
+  gap: .6rem;
+}
+.cat-service-item {
+  display: flex;
+  align-items: center;
+  gap: .8rem;
+  font-size: .84rem;
+  color: rgba(30,30,30,.6);
+  font-weight: 300;
+}
+.cat-service-item::before {
+  content: '';
+  width: 5px; height: 5px;
+  background: var(--pink);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* — precios — */
+.cat-packs { display: flex; flex-direction: column; gap: 2.5rem; }
+
+.cat-pack {
+  border-top: 1px solid rgba(30,30,30,.1);
+  padding-top: 2rem;
+}
+.cat-pack-title {
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 700;
+  font-size: clamp(1rem, 1.6vw, 1.3rem);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--dark);
+  margin-bottom: 1.2rem;
+}
+.cat-pack-rows { display: flex; flex-direction: column; gap: .5rem; }
+.cat-pack-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: .55rem 0;
+  border-bottom: 1px solid rgba(30,30,30,.06);
+  font-size: .84rem;
+}
+.cat-pack-row .personas { color: rgba(30,30,30,.5); font-weight: 300; }
+.cat-pack-row .precio {
+  font-family: 'League Spartan', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--dark);
+}
+.cat-pack-row .precio.consultar {
+  font-size: .72rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--pink-d);
+  font-weight: 600;
+}
+.cat-pack-note {
+  font-size: .75rem;
+  color: rgba(30,30,30,.35);
+  margin-top: 1rem;
+  font-weight: 300;
+}
+
+/* — contacto — */
+.cat-contact {
+  border-top: 1px solid rgba(30,30,30,.1);
+  padding-top: 2rem;
+}
+.cat-contact-label {
+  font-family: 'League Spartan', sans-serif;
+  font-size: .63rem;
+  letter-spacing: .28em;
+  text-transform: uppercase;
+  color: rgba(30,30,30,.35);
+  margin-bottom: 1.2rem;
+  display: block;
+}
+.cat-contact-links { display: flex; flex-direction: column; gap: .5rem; }
+.cat-contact-links a {
+  font-size: .9rem;
+  color: var(--dark);
+  text-decoration: none;
+  font-weight: 400;
+  transition: color .25s;
+}
+.cat-contact-links a:hover { color: var(--pink-d); }
+
+/* ── FOOTER ─────────────────────────── */
+footer {
+  background:var(--dark); padding:2.5rem 3rem;
+  display:flex; justify-content:space-between; align-items:center;
+  border-top:1px solid rgba(248,246,245,.05);
+}
+.footer-logo-img { height:1.4rem; width:auto; filter:brightness(0) invert(1); opacity:.55; }
+.footer-copy { font-size:.7rem; color:rgba(248,246,245,.22); letter-spacing:.08em; }
+.footer-ig { font-size:.7rem; color:rgba(248,246,245,.38); letter-spacing:.08em; text-decoration:none; transition:color .3s; }
+.footer-ig:hover { color:var(--pink); }
+
+/* ── REVEAL ──────────────────────────── */
+.rv { opacity:0; transform:translateY(22px); transition:opacity .9s,transform .9s; }
+.rv.on { opacity:1; transform:translateY(0); }
+.rv1 { transition-delay:.15s; }
+.rv2 { transition-delay:.3s; }
+.rv3 { transition-delay:.42s; }
+
+/* ── MOBILE ──────────────────────────── */
+@media(max-width:900px) {
+  nav { padding:1.2rem 1.5rem; }
+  .nav-links { display:none; }
+  .nav-burger { display:flex; }
+  .mobile-menu { display:flex; }
+  .cat-wrap { grid-template-columns:1fr; }
+  .cat-image { position:relative; height:60vw; }
+  .cat-content { padding:4rem 1.5rem 5rem; border-left:none; }
+  footer { flex-direction:column; gap:1rem; text-align:center; }
+}
+</style>
+</head>
+<body>
+
+<div id="cur"></div>
+<div id="cur-r"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="logo"><img src="logo.png" alt="Santtru"></a>
+  <ul class="nav-links">
+    <li><a href="nosotros.html">Nosotros</a></li>
+    <li><a href="acais.html">Producto</a></li>
+    <li><a href="localizacion.html">Localización</a></li>
+    <li><a href="catering.html" class="active">Catering</a></li>
+  </ul>
+  <button class="nav-burger" id="burger" aria-label="Menú">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="nosotros.html" onclick="closeMobileMenu()">Nosotros</a>
+  <a href="acais.html" onclick="closeMobileMenu()">Producto</a>
+  <a href="localizacion.html" onclick="closeMobileMenu()">Localización</a>
+  <a href="catering.html" onclick="closeMobileMenu()">Catering</a>
+  <span class="mm-sub">@santtru.club</span>
+</div>
+
+<!-- MAIN -->
+<div class="cat-wrap">
+
+  <!-- IMAGEN -->
+  <div class="cat-image">
+    <img src="localizacion-img.jpg" alt="Santtru Catering">
+  </div>
+
+  <!-- CONTENIDO -->
+  <div class="cat-content">
+
+    <div class="rv">
+      <span class="cat-eyebrow">Recarga al equipo</span>
+      <h1 class="cat-heading">Hacemos<br>catering</h1>
+    </div>
+
+    <p class="cat-sub rv rv1">Llevamos Santtru a tu evento. Açaí bowls y bebidas premium para grupos, empresas, celebraciones y todo lo que se te ocurra. Tú eliges el pack, nosotros ponemos lo mejor.</p>
+
+    <div class="cat-services rv rv1">
+      <div class="cat-service-item">Entrega en tu ubicación</div>
+      <div class="cat-service-item">Stands para eventos</div>
+      <div class="cat-service-item">Packs personalizados</div>
+      <div class="cat-service-item">Envío gratis a partir de 50 personas</div>
+    </div>
+
+    <!-- PRECIOS -->
+    <div class="cat-packs rv rv2">
+
+      <div class="cat-pack">
+        <h2 class="cat-pack-title">Pack Açaí Bowls</h2>
+        <div class="cat-pack-rows">
+          <div class="cat-pack-row">
+            <span class="personas">20 personas</span>
+            <span class="precio">160 €</span>
+          </div>
+          <div class="cat-pack-row">
+            <span class="personas">30 personas</span>
+            <span class="precio">220 €</span>
+          </div>
+          <div class="cat-pack-row">
+            <span class="personas">50 personas</span>
+            <span class="precio">370 €</span>
+          </div>
+          <div class="cat-pack-row">
+            <span class="personas">+50 personas</span>
+            <span class="precio consultar">Consultar</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="cat-pack">
+        <h2 class="cat-pack-title">Pack Bowls + Matcha & Lattes</h2>
+        <div class="cat-pack-rows">
+          <div class="cat-pack-row">
+            <span class="personas">20 personas</span>
+            <span class="precio">260 €</span>
+          </div>
+          <div class="cat-pack-row">
+            <span class="personas">30 personas</span>
+            <span class="precio">370 €</span>
+          </div>
+          <div class="cat-pack-row">
+            <span class="personas">50 personas</span>
+            <span class="precio">600 €</span>
+          </div>
+          <div class="cat-pack-row">
+            <span class="personas">+50 personas</span>
+            <span class="precio consultar">Consultar</span>
+          </div>
+        </div>
+        <p class="cat-pack-note">* Envío incluido a partir de 50 personas.</p>
+      </div>
+
+    </div>
+
+    <!-- CONTACTO -->
+    <div class="cat-contact rv rv3">
+      <span class="cat-contact-label">Consúltanos</span>
+      <div class="cat-contact-links">
+        <a href="mailto:santtru3@gmail.com">santtru3@gmail.com</a>
+        <a href="tel:+34699903058">+34 699 90 30 58</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <img src="logo.png" alt="Santtru" class="footer-logo-img">
+  <span class="footer-copy">© 2026 Santtru · Sant Cugat del Vallès</span>
+  <a href="https://instagram.com/santtru.club" class="footer-ig">@santtru.club</a>
+</footer>
+
+<script>
+// ── CURSOR
+const cur = document.getElementById('cur');
+const curR = document.getElementById('cur-r');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+(function loop(){rx+=(mx-rx)*.11;ry+=(my-ry)*.11;curR.style.left=rx+'px';curR.style.top=ry+'px';requestAnimationFrame(loop);})();
+document.querySelectorAll('a,button').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cur.style.width='20px';cur.style.height='20px';curR.style.width='52px';curR.style.height='52px';cur.style.background='var(--pink-d)';});
+  el.addEventListener('mouseleave',()=>{cur.style.width='10px';cur.style.height='10px';curR.style.width='36px';curR.style.height='36px';cur.style.background='var(--pink)';});
+});
+
+// ── HAMBURGER
+const burger = document.getElementById('burger');
+const mobileMenu = document.getElementById('mobileMenu');
+burger.addEventListener('click',()=>{
+  burger.classList.toggle('open');
+  mobileMenu.classList.toggle('open');
+  document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : '';
+});
+function closeMobileMenu(){
+  burger.classList.remove('open');
+  mobileMenu.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ── REVEAL
+document.querySelectorAll('.rv').forEach(el=>{
+  new IntersectionObserver(entries=>{
+    entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('on'); });
+  },{threshold:.05}).observe(el);
+});
+</script>
+</body>
+</html>

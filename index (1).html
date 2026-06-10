@@ -1,0 +1,1300 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Santtru — Açaí & Wellness Barcelona</title>
+<link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@300;400;600;700;900&family=Pacifico&family=Poppins:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+
+:root{
+  /* Brand colors */
+  --pink:    #f3afcd;
+  --pink-d:  #e896bc;
+  --dark:    #1e1e1e;
+  --cream:   #f8f6f5;
+  --burg:    #751438;
+  /* Grass/nature palette */
+  --grass:   #3a7d44;
+  --grass-l: #5aad66;
+  --sky:     #a8d8ea;
+  --sky-d:   #7bbdd4;
+  /* UI */
+  --white:   #ffffff;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  background: var(--dark);
+  color: var(--dark);
+  font-family: 'Poppins', sans-serif;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ── CURSOR ─────────────────────────── */
+#cur { position:fixed;width:10px;height:10px;background:var(--pink);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .3s,height .3s,background .3s; }
+#cur-r { position:fixed;width:36px;height:36px;border:1.5px solid rgba(243,175,205,.5);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .3s,height .3s; }
+
+/* ── NAV ────────────────────────────── */
+nav {
+  position: fixed; top:0; left:0; right:0; z-index:300;
+  padding: 1.4rem 3rem;
+  display: flex; justify-content:space-between; align-items:center;
+}
+nav::before {
+  content:''; position:absolute; inset:0;
+  background: linear-gradient(to bottom, rgba(30,30,30,.92) 0%, transparent 100%);
+  pointer-events: none;
+}
+.logo {
+  text-decoration: none; position: relative; display:flex; align-items:center;
+}
+.logo img {
+  height: 2rem; width: auto;
+  filter: brightness(0) invert(1);
+  transition: opacity .3s;
+}
+.logo:hover img { opacity: .75; }
+.logo span { display:none; }
+.nav-links { display:flex; gap:2rem; list-style:none; position:relative; }
+.nav-links a { font-size:.7rem; letter-spacing:.18em; text-transform:uppercase; color:rgba(248,246,245,.55); text-decoration:none; transition:color .3s; font-weight:400; }
+.nav-links a:hover { color: var(--pink); }
+.nav-cta {
+  background: var(--pink); color: var(--dark);
+  padding: .55rem 1.5rem; border-radius:100px;
+  font-size: .7rem; letter-spacing:.14em; text-transform:uppercase;
+  text-decoration:none; font-weight:700;
+  position:relative; transition:background .3s,transform .2s;
+}
+.nav-cta:hover { background: var(--pink-d); transform:scale(1.04); }
+
+/* ── SCROLL VIDEO SECTION ────────────── */
+.scroll-section { position:relative; height:700vh; }
+.scroll-sticky {
+  position: sticky; top:0;
+  height: 100vh; overflow:hidden;
+  display:flex; align-items:center; justify-content:center;
+}
+
+/* Fallback bg — grass+sky gradient */
+.scroll-bg {
+  position: absolute; inset:0;
+  background: linear-gradient(
+    to bottom,
+    var(--sky) 0%,
+    var(--sky-d) 38%,
+    var(--grass) 55%,
+    #2a5e32 100%
+  );
+}
+
+#sv {
+  position: absolute; inset:0;
+  width:100%; height:100%;
+  display:block;
+  opacity:0; transition:opacity .6s;
+  image-rendering: auto;
+  image-rendering: high-quality;
+  -webkit-image-rendering: auto;
+}
+#sv.rdy { opacity:1; }
+
+.frame-loader {
+  position:absolute; inset:0; z-index:8;
+  background:var(--dark);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  transition:opacity .7s;
+  pointer-events:none;
+}
+.frame-loader.done { opacity:0; }
+.loader-logo {
+  margin-bottom:1.6rem;
+}
+.loader-logo img {
+  height: 3rem; width: auto;
+  filter: brightness(0) invert(1);
+}
+.loader-track { width:180px; height:2px; background:rgba(255,255,255,.1); }
+.loader-fill  { height:100%; background:var(--pink); width:0%; transition:width .12s linear; }
+
+/* Overlay gradient — stronger on corners for edge text */
+.sv-overlay {
+  position: absolute; inset:0; z-index:2; pointer-events:none;
+  background:
+    linear-gradient(to right, rgba(30,30,30,.55) 0%, transparent 35%, transparent 65%, rgba(30,30,30,.45) 100%),
+    linear-gradient(to bottom, rgba(30,30,30,.5) 0%, transparent 30%, transparent 65%, rgba(30,30,30,.5) 100%);
+}
+
+/* Progress bar */
+.prog {
+  position:absolute; bottom:0; left:0; height:3px; z-index:20;
+  background: var(--pink); transition:width .08s linear; width:0%;
+}
+
+/* Phase text — bottom-right corner */
+.sv-text {
+  position: absolute; z-index:10;
+  right:2.5rem; bottom:5rem;
+  display:flex; flex-direction:column; align-items:flex-end;
+  pointer-events:none; text-align:right;
+}
+.sv-eyebrow {
+  font-size:.68rem; letter-spacing:.32em; text-transform:uppercase;
+  color: var(--pink); opacity:0; transform:translateY(10px);
+  transition:opacity .5s,transform .5s; margin-bottom:.8rem;
+  font-weight:500;
+}
+.sv-title {
+  font-family:'League Spartan',sans-serif; font-weight:900;
+  font-size: clamp(2.2rem,5.5vw,5.5rem); line-height:.92;
+  color: var(--white); text-transform:uppercase;
+  opacity:0; transform:translateY(16px);
+  transition:opacity .5s .1s,transform .5s .1s;
+  text-shadow: 0 4px 30px rgba(0,0,0,.4);
+}
+.sv-title .accent { color: var(--pink); }
+.sv-text.on .sv-eyebrow,
+.sv-text.on .sv-title { opacity:1; transform:translateY(0); }
+
+/* Ingredient labels */
+.ilab {
+  position:absolute; z-index:12;
+  opacity:0; transition:opacity .4s,transform .4s;
+  pointer-events:none;
+}
+.ilab.show { opacity:1; }
+.ilab-name {
+  font-family:'League Spartan',sans-serif; font-weight:700;
+  font-size:clamp(1.1rem,2.5vw,1.8rem); color:var(--white);
+  text-transform:uppercase; letter-spacing:.05em;
+  text-shadow:0 2px 12px rgba(0,0,0,.4);
+}
+.ilab-dot { width:6px;height:6px;background:var(--pink);border-radius:50%;margin:.4rem 0; }
+.ilab-sub {
+  font-size:.62rem; letter-spacing:.15em; text-transform:uppercase;
+  color:rgba(248,246,245,.7); font-weight:300;
+}
+#lb1 { left:5%;top:45%;transform:translateX(-12px); }
+#lb1.show { transform:translateX(0); }
+#lb2 { right:5%;top:22%;text-align:right;transform:translateX(12px); }
+#lb2 .ilab-dot { margin-left:auto; }
+#lb2.show { transform:translateX(0); }
+#lb3 { right:5%;bottom:28%;text-align:right;transform:translateX(12px); }
+#lb3 .ilab-dot { margin-left:auto; }
+#lb3.show { transform:translateX(0); }
+#lb4 { left:5%;top:22%;transform:translateX(-12px); }
+#lb4.show { transform:translateX(0); }
+#lb5 { left:5%;bottom:20%;transform:translateX(-12px);text-align:left; }
+#lb5 .ilab-dot { margin:0; }
+#lb5.show { transform:translateX(0); }
+
+/* Step indicator */
+.sdots {
+  position:absolute;right:2rem;top:50%;transform:translateY(-50%);
+  z-index:15;display:flex;flex-direction:column;gap:.7rem;
+}
+.sdot {
+  width:7px;height:7px;border-radius:50%;
+  background:rgba(248,246,245,.25);
+  border:1px solid rgba(248,246,245,.4);
+  transition:background .4s,transform .4s,border-color .4s;
+}
+.sdot.on { background:var(--pink);border-color:var(--pink);transform:scale(1.3); }
+
+/* Phase corner text */
+.phase-box {
+  position:absolute;left:2.5rem;bottom:2.5rem;z-index:15;
+  opacity:0;transition:opacity .5s;
+}
+.phase-box.on { opacity:1; }
+.phase-n { font-family:'League Spartan',sans-serif;font-size:5rem;font-weight:900;color:rgba(248,246,245,.07);line-height:1; }
+.phase-l { font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(248,246,245,.5);margin-top:-.6rem; }
+
+/* HERO intro text — top-left corner */
+.hero-intro {
+  position:absolute;z-index:11;
+  top:5.5rem;left:2.5rem;
+  display:flex;flex-direction:column;align-items:flex-start;
+  pointer-events:none;
+  transition:opacity .4s;
+}
+.hero-intro.hide { opacity:0; }
+.hero-intro h1 {
+  line-height:1;
+}
+.hero-intro h1 img {
+  height: clamp(5rem, 12vw, 11rem);
+  width: auto;
+  filter: brightness(0) invert(1) drop-shadow(0 4px 30px rgba(0,0,0,.5));
+}
+.hero-intro p {
+  font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(248,246,245,.6);margin-top:.9rem;font-weight:300;
+}
+.scroll-hint {
+  position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);
+  z-index:15;display:flex;flex-direction:column;align-items:center;gap:8px;
+  transition:opacity .4s;
+}
+.scroll-hint.hide { opacity:0; }
+.scroll-hint span { font-size:.6rem;letter-spacing:.28em;text-transform:uppercase;color:rgba(248,246,245,.4); }
+.scroll-hint-line { width:1px;height:36px;background:var(--pink);transform-origin:top;animation:drip 1.6s ease-in-out infinite; }
+@keyframes drip{0%{transform:scaleY(0);}50%{transform:scaleY(1);}100%{transform:scaleY(0);transform-origin:bottom;}}
+
+/* ── MARQUEE ────────────────────────── */
+.marquee { background:var(--pink);padding:.9rem 0;overflow:hidden; }
+.marquee-t { display:flex;gap:2.5rem;animation:march 18s linear infinite;width:max-content; }
+.marquee-t span { font-family:'League Spartan',sans-serif;font-weight:700;font-size:.9rem;letter-spacing:.06em;text-transform:uppercase;color:var(--dark);white-space:nowrap; }
+.marquee-t b { width:5px;height:5px;background:var(--burg);border-radius:50%;align-self:center;display:inline-block;flex-shrink:0; }
+@keyframes march{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+/* ── TAG LABEL (global) ─────────────── */
+.tag-label {
+  font-size:.65rem;letter-spacing:.28em;text-transform:uppercase;
+  color:var(--burg);font-weight:600;margin-bottom:1rem;display:block;
+}
+
+/* ── TU AÇAÍ BOWL SECTION ───────────── */
+.bowl-section {
+  background:var(--dark);
+  padding:7rem 3rem 8rem;
+  position:relative; overflow:hidden;
+}
+.bowl-section::before {
+  content:'AÇAÍ';
+  font-family:'League Spartan',sans-serif;font-weight:900;
+  font-size:22vw;color:rgba(243,175,205,.03);
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  white-space:nowrap;pointer-events:none;letter-spacing:-.03em;
+}
+.bowl-sec-head {
+  text-align:center;margin-bottom:3.5rem;position:relative;
+}
+.bowl-sec-head .tag-label { color:var(--pink);margin-bottom:.8rem; }
+.bowl-sec-head h2 {
+  font-family:'League Spartan',sans-serif;font-weight:900;
+  font-size:clamp(2.8rem,7vw,6.5rem);text-transform:uppercase;
+  color:var(--white);line-height:.92;
+}
+.bowl-sec-head h2 .pk { color:var(--pink); }
+.bowl-sec-head p {
+  font-size:.85rem;color:rgba(248,246,245,.35);margin-top:1rem;
+  font-weight:300;max-width:460px;margin-inline:auto;
+}
+
+/* tabs */
+.bowl-tabs {
+  display:flex;justify-content:center;gap:.6rem;
+  margin-bottom:4rem;position:relative;
+}
+.bowl-tab {
+  display:flex;align-items:center;gap:.7rem;
+  background:rgba(248,246,245,.05);
+  border:1.5px solid rgba(248,246,245,.1);
+  color:rgba(248,246,245,.4);
+  padding:.9rem 2.4rem;border-radius:100px;
+  font-family:'League Spartan',sans-serif;font-weight:700;
+  font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;
+  cursor:none;transition:all .35s;
+}
+.bowl-tab .tab-icon {
+  font-size:1.1rem;
+}
+.bowl-tab:hover:not(.on) {
+  border-color:rgba(243,175,205,.3);color:rgba(248,246,245,.7);
+}
+.bowl-tab.on {
+  background:var(--pink);border-color:var(--pink);color:var(--dark);
+}
+.bowl-pane { display:none; }
+.bowl-pane.on { display:block; }
+
+/* ── CREA EL TUYO pane ──────────────── */
+.build-sizes {
+  display:flex;justify-content:center;gap:1.5rem;
+  margin-bottom:3.5rem;flex-wrap:wrap;
+}
+.build-size-card {
+  flex:1;max-width:340px;min-width:240px;
+  background:rgba(248,246,245,.04);
+  border:1.5px solid rgba(248,246,245,.1);
+  border-radius:8px;padding:2.2rem 2.5rem;
+  transition:border-color .3s,background .3s;
+  position:relative;overflow:hidden;
+}
+.build-size-card:hover {
+  border-color:var(--pink);background:rgba(243,175,205,.07);
+}
+.build-size-card::after {
+  content:attr(data-letter);
+  font-family:'League Spartan',sans-serif;font-weight:900;
+  font-size:9rem;color:rgba(243,175,205,.05);
+  position:absolute;right:-1rem;bottom:-2rem;line-height:1;
+  pointer-events:none;
+}
+.bsc-top {
+  display:flex;justify-content:space-between;align-items:flex-start;
+  margin-bottom:1.4rem;
+}
+.bsc-name {
+  font-family:'League Spartan',sans-serif;font-weight:900;
+  font-size:2rem;text-transform:uppercase;color:var(--white);
+}
+.bsc-price {
+  font-family:'League Spartan',sans-serif;font-weight:900;
+  font-size:2.2rem;color:var(--pink);line-height:1;
+}
+.bsc-price span {
+  font-size:.75rem;font-weight:400;color:rgba(248,246,245,.4);
+  display:block;letter-spacing:.1em;text-transform:uppercase;margin-top:.1rem;
+  text-align:right;
+}
+.bsc-toppings-badge {
+  display:inline-flex;align-items:center;gap:.5rem;
+  border:1px solid rgba(243,175,205,.3);
+  padding:.35rem 1rem;border-radius:100px;
+  font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--pink);font-weight:600;margin-bottom:1.2rem;
+}
+.bsc-desc {
+  font-size:.8rem;color:rgba(248,246,245,.35);
+  font-weight:300;line-height:1.7;
+}
+
+/* toppings grid inside crea */
+.build-toppings {
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:1.5px;background:rgba(248,246,245,.07);
+  max-width:1100px;margin:0 auto;
+  border:1.5px solid rgba(248,246,245,.07);border-radius:4px;overflow:hidden;
+}
+.build-cat {
+  background:var(--dark);padding:2rem 1.6rem;
+  transition:background .3s;
+}
+.build-cat:hover { background:rgba(243,175,205,.05); }
+.build-cat-title {
+  font-family:'League Spartan',sans-serif;font-weight:700;
+  font-size:.8rem;text-transform:uppercase;color:var(--pink);
+  margin-bottom:1rem;letter-spacing:.1em;
+}
+.build-list { list-style:none; }
+.build-list li {
+  font-size:.78rem;color:rgba(248,246,245,.55);
+  padding:.3rem 0;border-bottom:1px solid rgba(248,246,245,.05);
+  font-weight:300;
+}
+.build-list li:last-child { border-bottom:none; }
+.build-list li .extra { color:var(--pink);font-size:.68rem; }
+.build-extra-note {
+  text-align:center;margin-top:1.2rem;
+  font-size:.72rem;color:rgba(248,246,245,.25);font-style:italic;
+}
+
+/* ── ELIGE EL TUYO pane ─────────────── */
+.menu-price-note {
+  text-align:center;margin-bottom:2.5rem;
+  font-size:.78rem;color:rgba(248,246,245,.35);font-weight:300;letter-spacing:.08em;
+}
+.menu-price-note strong { color:var(--pink);font-weight:600; }
+.menu-grid {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:1.4rem;max-width:1200px;margin:0 auto;
+}
+.menu-card {
+  background:rgba(248,246,245,.04);
+  border:1.5px solid rgba(248,246,245,.07);
+  border-radius:6px;overflow:hidden;
+  transition:transform .4s,box-shadow .4s,border-color .4s;
+  cursor:none;
+}
+.menu-card:hover {
+  transform:translateY(-6px);
+  box-shadow:0 20px 50px rgba(0,0,0,.4);
+  border-color:var(--pink);
+}
+.menu-img {
+  height:190px;overflow:hidden;
+  background:rgba(248,246,245,.06);
+}
+.menu-img img {
+  width:100%;height:100%;object-fit:cover;
+  transition:transform .5s;
+  will-change:transform;
+}
+.menu-card:hover .menu-img img { transform:scale(1.07); }
+.menu-body { padding:1.1rem 1.2rem .8rem; }
+.menu-name {
+  font-family:'League Spartan',sans-serif;font-weight:700;
+  font-size:1rem;text-transform:uppercase;color:var(--white);
+  margin-bottom:.25rem;
+}
+.menu-prices {
+  font-family:'League Spartan',sans-serif;font-weight:700;
+  font-size:.78rem;color:var(--pink);letter-spacing:.04em;
+}
+.menu-prices span { color:rgba(248,246,245,.3);margin:0 .3rem; }
+
+/* ── SECTION GENERIC ────────────────── */
+section.padded { padding:6rem 3rem; }
+.sec-head { text-align:center;margin-bottom:4rem; }
+.sec-head .tag-label { color:var(--burg);margin-bottom:.8rem; }
+.sec-head h2 {
+  font-family:'League Spartan',sans-serif;font-weight:900;
+  font-size:clamp(2rem,5vw,4rem);text-transform:uppercase;
+  color:var(--dark);
+}
+.sec-head h2 .pk { color:var(--burg); }
+.sec-head p { font-size:.85rem;color:rgba(30,30,30,.5);margin-top:.8rem;font-weight:300;max-width:480px;margin-inline:auto; }
+
+/* ── BOWLS SCROLL SECTION ───────────── */
+.bowls-scroll-section { position:relative; height:700vh; }
+.bowls-sticky {
+  position:sticky; top:0;
+  height:100vh; overflow:hidden;
+  display:flex; align-items:center; justify-content:center;
+}
+.bowls-bg {
+  position:absolute; inset:0;
+  background:linear-gradient(to bottom,#1e1e1e 0%,#2a1a1a 100%);
+}
+#sv2 {
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  display:block; opacity:0; transition:opacity .6s;
+  image-rendering:auto; image-rendering:high-quality;
+}
+#sv2.rdy { opacity:1; }
+.bowls-overlay {
+  position:absolute; inset:0; z-index:2; pointer-events:none;
+  background:
+    linear-gradient(to right,rgba(30,30,30,.6) 0%,transparent 40%,transparent 60%,rgba(30,30,30,.5) 100%),
+    linear-gradient(to bottom,rgba(30,30,30,.55) 0%,transparent 28%,transparent 62%,rgba(30,30,30,.55) 100%);
+}
+.bowls-top-label {
+  position:absolute; z-index:11;
+  top:5.5rem; left:2.5rem;
+  display:flex; flex-direction:column; align-items:flex-start;
+  pointer-events:none; transition:opacity .4s;
+}
+.bowls-eyebrow-top {
+  font-size:.7rem; letter-spacing:.32em; text-transform:uppercase;
+  color:var(--pink); font-weight:500; display:block; margin-bottom:.6rem;
+}
+.bowls-top-label h2 {
+  font-family:'League Spartan',sans-serif; font-weight:900;
+  font-size:clamp(3rem,8vw,7.5rem); line-height:.92;
+  color:var(--white); text-transform:uppercase;
+  text-shadow:0 6px 50px rgba(0,0,0,.5);
+}
+.bowls-top-label h2 .pk { color:#8ab822; }
+.bv-text {
+  position:absolute; z-index:10;
+  right:2.5rem; bottom:5rem;
+  display:flex; flex-direction:column; align-items:flex-end;
+  pointer-events:none; text-align:right;
+}
+.bv-eyebrow {
+  font-size:.68rem; letter-spacing:.32em; text-transform:uppercase;
+  color:var(--pink); opacity:0; transform:translateY(10px);
+  transition:opacity .5s,transform .5s; margin-bottom:.8rem; font-weight:500;
+}
+.bv-title {
+  font-family:'League Spartan',sans-serif; font-weight:900;
+  font-size:clamp(2.2rem,5.5vw,5.5rem); line-height:.92;
+  color:var(--white); text-transform:uppercase;
+  opacity:0; transform:translateY(16px);
+  transition:opacity .5s .1s,transform .5s .1s;
+  text-shadow:0 4px 30px rgba(0,0,0,.4);
+}
+.bv-title .accent { color:var(--pink); }
+.bv-text.on .bv-eyebrow,
+.bv-text.on .bv-title { opacity:1; transform:translateY(0); }
+.blab {
+  position:absolute; z-index:12;
+  opacity:0; transition:opacity .4s,transform .4s;
+  pointer-events:none;
+}
+.blab.show { opacity:1; }
+.blab-name {
+  font-family:'League Spartan',sans-serif; font-weight:700;
+  font-size:clamp(1.1rem,2.5vw,1.8rem); color:var(--white);
+  text-transform:uppercase; letter-spacing:.05em;
+  text-shadow:0 2px 12px rgba(0,0,0,.4);
+}
+.blab-dot { width:6px;height:6px;background:var(--pink);border-radius:50%;margin:.4rem 0; }
+.blab-sub { font-size:.62rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(248,246,245,.7);font-weight:300; }
+#bl1 { left:5%;top:42%;transform:translateX(-12px); }
+#bl1.show { transform:translateX(0); }
+#bl2 { right:5%;top:22%;text-align:right;transform:translateX(12px); }
+#bl2 .blab-dot { margin-left:auto; }
+#bl2.show { transform:translateX(0); }
+#bl3 { left:5%;bottom:28%;transform:translateX(-12px); }
+#bl3.show { transform:translateX(0); }
+#bl4 { right:5%;bottom:25%;text-align:right;transform:translateX(12px); }
+#bl4 .blab-dot { margin-left:auto; }
+#bl4.show { transform:translateX(0); }
+.bdots {
+  position:absolute;right:2rem;top:50%;transform:translateY(-50%);
+  z-index:15;display:flex;flex-direction:column;gap:.7rem;
+}
+.bdot {
+  width:7px;height:7px;border-radius:50%;
+  background:rgba(248,246,245,.25);
+  border:1px solid rgba(248,246,245,.4);
+  transition:background .4s,transform .4s,border-color .4s;
+}
+.bdot.on { background:var(--pink);border-color:var(--pink);transform:scale(1.3); }
+.bphase-box {
+  position:absolute;left:2.5rem;bottom:2.5rem;z-index:15;
+  opacity:0;transition:opacity .5s;
+}
+.bphase-box.on { opacity:1; }
+.bphase-n { font-family:'League Spartan',sans-serif;font-size:5rem;font-weight:900;color:rgba(248,246,245,.07);line-height:1; }
+.bphase-l { font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(248,246,245,.5);margin-top:-.6rem; }
+
+/* ── CREA TU BOWL ───────────────────── */
+.crea-section {
+  background:var(--dark);
+  padding:6rem 3rem;
+}
+.crea-section .sec-head h2 { color:var(--white); }
+.crea-section .sec-head .pk { color:var(--pink); }
+.crea-section .sec-head .tag-label { color:var(--pink); }
+.crea-section .sec-head p { color:rgba(248,246,245,.4); }
+
+.size-row {
+  display:flex;justify-content:center;gap:2rem;margin-bottom:3.5rem;
+}
+.size-card {
+  background:rgba(248,246,245,.04);border:1.5px solid rgba(248,246,245,.1);
+  padding:2rem 3rem;text-align:center;border-radius:4px;
+  transition:border-color .3s,background .3s;min-width:200px;
+}
+.size-card:hover { border-color:var(--pink);background:rgba(243,175,205,.06); }
+.size-icon { font-size:2rem;margin-bottom:1rem; }
+.size-name {
+  font-family:'League Spartan',sans-serif;font-weight:700;
+  font-size:1rem;text-transform:uppercase;color:var(--pink);margin-bottom:.3rem;
+}
+.size-info { font-size:.78rem;color:rgba(248,246,245,.4);font-weight:300;margin-bottom:.8rem;line-height:1.5; }
+.size-price {
+  font-family:'League Spartan',sans-serif;font-weight:900;
+  font-size:1.8rem;color:var(--white);
+}
+
+.toppings-grid {
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:1.5px;background:rgba(248,246,245,.07);
+  max-width:1100px;margin:0 auto;
+  border:1.5px solid rgba(248,246,245,.07);
+}
+.topping-cat {
+  background:var(--dark);padding:2rem 1.6rem;
+  transition:background .3s;
+}
+.topping-cat:hover { background:rgba(243,175,205,.06); }
+.cat-title {
+  font-family:'League Spartan',sans-serif;font-weight:700;
+  font-size:.8rem;text-transform:uppercase;color:var(--pink);
+  margin-bottom:1rem;letter-spacing:.1em;
+}
+.topping-list { list-style:none; }
+.topping-list li {
+  font-size:.78rem;color:rgba(248,246,245,.55);
+  padding:.3rem 0;border-bottom:1px solid rgba(248,246,245,.05);
+  font-weight:300;
+}
+.topping-list li:last-child { border-bottom:none; }
+.topping-list li .extra { color:var(--pink);font-size:.68rem; }
+.extra-note {
+  text-align:center;margin-top:1.5rem;
+  font-size:.75rem;color:rgba(248,246,245,.35);font-style:italic;
+}
+
+/* ── DRINKS ─────────────────────────── */
+.drinks-section {
+  background: linear-gradient(
+    to bottom,
+    #3c4712 0%,
+    #2e3a10 10%,
+    #1a2210 22%,
+    #1e1e1e 38%,
+    #1e1e1e 100%
+  );
+  margin-top: -2px;
+  padding: 7rem 3rem 8rem;
+  position: relative; overflow: hidden;
+}
+.drinks-section::before {
+  content:'MATCHA';
+  font-family:'League Spartan',sans-serif;font-weight:900;
+  font-size:22vw;color:rgba(100,120,30,.06);
+  position:absolute;top:2rem;left:50%;transform:translateX(-50%);
+  white-space:nowrap;pointer-events:none;letter-spacing:-.03em;
+}
+.drinks-sec-head {
+  text-align:center;margin-bottom:5rem;position:relative;
+}
+.drinks-sec-head .tag-label { color:var(--pink);margin-bottom:.8rem; }
+.drinks-sec-head h2 {
+  font-family:'League Spartan',sans-serif;font-weight:900;
+  font-size:clamp(2.8rem,7vw,6.5rem);text-transform:uppercase;
+  color:var(--white);line-height:.92;
+}
+.drinks-sec-head h2 .pk { color:var(--pink); }
+
+/* category block */
+.drink-category { margin-bottom:4.5rem; }
+.drink-category:last-child { margin-bottom:0; }
+.drink-cat-header {
+  display:flex;align-items:center;gap:1.5rem;
+  margin-bottom:2rem;
+}
+.drink-cat-label {
+  font-family:'League Spartan',sans-serif;font-weight:900;
+  font-size:clamp(1.4rem,3vw,2.2rem);text-transform:uppercase;
+  color:var(--white);white-space:nowrap;
+}
+.drink-cat-label .pk { color:var(--pink); }
+.drink-cat-line {
+  flex:1;height:1px;
+  background:linear-gradient(to right,rgba(248,246,245,.15),transparent);
+}
+.drink-cat-pill {
+  font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(248,246,245,.4);border:1px solid rgba(248,246,245,.15);
+  padding:.3rem .8rem;border-radius:100px;white-space:nowrap;
+}
+
+/* drink grid */
+.drink-grid {
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:1.4rem;max-width:1200px;
+}
+.drink-card {
+  background:rgba(248,246,245,.04);
+  border:1.5px solid rgba(248,246,245,.07);
+  overflow:hidden;border-radius:6px;
+  transition:transform .4s,box-shadow .4s,border-color .4s;
+  cursor:none;
+}
+.drink-card:hover {
+  transform:translateY(-6px);
+  box-shadow:0 20px 50px rgba(0,0,0,.4);
+  border-color:var(--pink);
+}
+.drink-img {
+  height:200px;overflow:hidden;
+  background:rgba(248,246,245,.06);
+}
+.drink-img img {
+  width:100%;height:100%;object-fit:cover;
+  transition:transform .5s;will-change:transform;
+}
+.drink-card:hover .drink-img img { transform:scale(1.07); }
+.drink-body { padding:1rem 1.1rem .9rem; }
+.drink-name {
+  font-family:'League Spartan',sans-serif;font-weight:700;
+  font-size:.95rem;text-transform:uppercase;color:var(--white);margin-bottom:.0rem;
+}
+
+/* ── CTA ─────────────────────────────── */
+.cta-section {
+  background:var(--pink);
+  padding:8rem 3rem;
+  text-align:center;
+  position:relative;overflow:hidden;
+}
+.cta-section::before {
+  content:'YOU DESERVE IT';
+  font-family:'League Spartan',sans-serif;font-weight:900;
+  font-size:8vw;color:rgba(117,20,56,.08);
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  white-space:nowrap;pointer-events:none;letter-spacing:-.02em;
+}
+.cta-section h2 {
+  font-family:'League Spartan',sans-serif;font-weight:900;
+  font-size:clamp(2.5rem,7vw,7rem);text-transform:uppercase;
+  line-height:.95;color:var(--dark);position:relative;z-index:1;
+}
+.cta-section h2 span { color:var(--burg); }
+.cta-btn {
+  display:inline-block;margin-top:2.5rem;
+  background:var(--dark);color:var(--pink);
+  padding:.9rem 3rem;border-radius:100px;
+  font-family:'League Spartan',sans-serif;font-weight:700;
+  font-size:.8rem;letter-spacing:.15em;text-transform:uppercase;
+  text-decoration:none;position:relative;z-index:1;
+  transition:transform .3s,box-shadow .3s;
+}
+.cta-btn:hover { transform:scale(1.05);box-shadow:0 16px 40px rgba(30,30,30,.2); }
+
+/* ── FOOTER ─────────────────────────── */
+footer {
+  background:var(--dark);padding:2.5rem 3rem;
+  display:flex;justify-content:space-between;align-items:center;
+  border-top:1px solid rgba(248,246,245,.05);
+}
+.footer-logo { font-family:'League Spartan',sans-serif;font-weight:700;font-size:1.1rem;color:var(--pink); }
+.footer-copy { font-size:.7rem;color:rgba(248,246,245,.25);letter-spacing:.08em; }
+.footer-ig { font-size:.7rem;color:rgba(248,246,245,.4);letter-spacing:.08em;text-decoration:none;transition:color .3s; }
+.footer-ig:hover { color:var(--pink); }
+
+/* ── REVEAL ──────────────────────────── */
+.rv { opacity:0;transform:translateY(32px);transition:opacity .8s,transform .8s; }
+.rv.on { opacity:1;transform:translateY(0); }
+.rv1 { transition-delay:.1s; }
+.rv2 { transition-delay:.2s; }
+.rv3 { transition-delay:.3s; }
+.rv4 { transition-delay:.4s; }
+.rv5 { transition-delay:.5s; }
+
+/* ── MOBILE ──────────────────────────── */
+@media(max-width:900px) {
+  nav { padding:1.2rem 1.5rem; }
+  .nav-links { display:none; }
+  .drink-grid { grid-template-columns:repeat(2,1fr); }
+  footer { flex-direction:column;gap:1rem;text-align:center; }
+  .sdots,.phase-box,.bdots,.bphase-box { display:none; }
+  section.padded { padding:4rem 1.5rem; }
+  .build-toppings { grid-template-columns:1fr 1fr; }
+  .menu-grid { grid-template-columns:repeat(2,1fr); }
+  .drinks-section { padding:5rem 1.5rem 6rem; }
+}
+@media(max-width:600px) {
+  .drink-grid { grid-template-columns:1fr 1fr; }
+  .build-toppings { grid-template-columns:1fr; }
+  .build-sizes { flex-direction:column; }
+  .menu-grid { grid-template-columns:1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div id="cur"></div>
+<div id="cur-r"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="logo"><img src="logo.png" alt="Santtru"></a>
+  <ul class="nav-links">
+    <li><a href="#crea">Tu Açaí Bowl</a></li>
+    <li><a href="#bowls">Signature Bowls</a></li>
+    <li><a href="#drinks">Bebidas</a></li>
+  </ul>
+
+</nav>
+
+<!-- =============================================
+     SCROLL VIDEO HERO
+============================================= -->
+<section class="scroll-section" id="hero">
+  <div class="scroll-sticky" id="ss">
+
+    <!-- Fallback bg: grass + sky -->
+    <div class="scroll-bg"></div>
+
+    <!-- ★ CANVAS — frame sequence scrubbed with scroll -->
+    <canvas id="sv"></canvas>
+    <div class="frame-loader" id="frameLoader">
+      <div class="loader-logo"><img src="logo.png" alt="Santtru"></div>
+      <div class="loader-track"><div class="loader-fill" id="loaderFill"></div></div>
+    </div>
+
+    <div class="sv-overlay"></div>
+    <div class="prog" id="prog"></div>
+
+    <!-- Hero intro (visible before scroll) -->
+    <div class="hero-intro" id="heroIntro">
+      <h1><img src="logo.png" alt="Santtru"></h1>
+      <p>Sant Cugat del Vallès · @santtru.club</p>
+    </div>
+
+    <!-- Scroll cue -->
+    <div class="scroll-hint" id="scrollHint">
+      <span>Scroll</span>
+      <div class="scroll-hint-line"></div>
+    </div>
+
+    <!-- Overlay text during scroll -->
+    <div class="sv-text" id="svt">
+      <span class="sv-eyebrow">Ingredientes naturales</span>
+      <h2 class="sv-title" id="svTitle">PURO<br><span class="accent">AÇAÍ</span></h2>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- =============================================
+     TU AÇAÍ BOWL
+============================================= -->
+<section class="bowl-section" id="crea">
+
+  <div class="bowl-sec-head rv">
+    <span class="tag-label">Personaliza tu experiencia</span>
+    <h2>TU AÇAÍ<br><span class="pk">BOWL</span></h2>
+    <p>Créalo a tu manera o elige uno de nuestros clásicos</p>
+  </div>
+
+  <!-- Tabs -->
+  <div class="bowl-tabs rv">
+    <button class="bowl-tab on" onclick="switchBowlTab('menu',this)">
+      <span class="tab-icon">◈</span> Elige el tuyo
+    </button>
+    <button class="bowl-tab" onclick="switchBowlTab('build',this)">
+      <span class="tab-icon">✦</span> Crea el tuyo
+    </button>
+  </div>
+
+  <!-- PANE: Crea el tuyo -->
+  <div class="bowl-pane" id="bp-build">
+
+    <div class="build-sizes">
+
+      <div class="build-size-card rv" data-letter="M">
+        <div class="bsc-top">
+          <div class="bsc-name">Mediano</div>
+          <div class="bsc-price">7€<span>por bowl</span></div>
+        </div>
+        <div class="bsc-toppings-badge">✦ 3 toppings incluidos</div>
+        <p class="bsc-desc">El tamaño perfecto para empezar el día o recargar después de entrenar. Elige tu base de açaí y combina 3 toppings a tu gusto.</p>
+      </div>
+
+      <div class="build-size-card rv rv1" data-letter="G">
+        <div class="bsc-top">
+          <div class="bsc-name">Grande</div>
+          <div class="bsc-price">9,90€<span>por bowl</span></div>
+        </div>
+        <div class="bsc-toppings-badge">✦ 4 toppings incluidos</div>
+        <p class="bsc-desc">Para los que no se conforman con poco. Base de açaí generosa con 4 toppings a elegir entre toda nuestra selección.</p>
+      </div>
+
+    </div>
+
+    <div class="build-toppings rv">
+      <div class="build-cat">
+        <div class="build-cat-title">Fruta Fresca</div>
+        <ul class="build-list">
+          <li>Kiwi</li><li>Coco</li><li>Fresas</li>
+          <li>Mango</li><li>Plátano</li>
+          <li>Arándanos <span class="extra">+1€</span></li>
+        </ul>
+      </div>
+      <div class="build-cat">
+        <div class="build-cat-title">Crunchy Top</div>
+        <ul class="build-list">
+          <li>Semillas de Chia</li><li>Semillas de Girasol</li>
+          <li>Granola Tradicional</li><li>Granola Fit</li>
+          <li>Chispas Choc. Negro</li><li>Chispas Choc. Blanco</li>
+        </ul>
+      </div>
+      <div class="build-cat">
+        <div class="build-cat-title">Originales</div>
+        <ul class="build-list">
+          <li>Leche en Polvo</li><li>Pudding de Chia</li>
+          <li>Yogur Griego</li><li>Almendras Laminadas</li>
+          <li>Pudding Chia Matcha</li>
+          <li>Proteína Vegana <span class="extra">+1€</span></li>
+        </ul>
+      </div>
+      <div class="build-cat">
+        <div class="build-cat-title">Creamy Top</div>
+        <ul class="build-list">
+          <li>Nutella</li><li>Crema de Lotus</li>
+          <li>Leche Condensada</li><li>Mant. de Cacahuete</li>
+          <li>Crema de Pistacho <span class="extra">+1€</span></li>
+        </ul>
+      </div>
+    </div>
+    <p class="build-extra-note rv">Extra toppings: €0,80 c/u</p>
+
+  </div>
+
+  <!-- PANE: Elige el tuyo -->
+  <div class="bowl-pane on" id="bp-menu">
+
+    <div class="menu-grid">
+      <div class="menu-card rv">
+        <div class="menu-img"><img src="bowls/balance.jpg" alt="Balance" loading="lazy" decoding="async"></div>
+        <div class="menu-body">
+          <div class="menu-name">Balance</div>
+          <div class="menu-prices">M €8,10 <span>·</span> G €10,50</div>
+        </div>
+      </div>
+      <div class="menu-card rv rv1">
+        <div class="menu-img"><img src="bowls/bora bora.jpg" alt="Bora Bora" loading="lazy" decoding="async"></div>
+        <div class="menu-body">
+          <div class="menu-name">Bora Bora</div>
+          <div class="menu-prices">M €8,10 <span>·</span> G €10,50</div>
+        </div>
+      </div>
+      <div class="menu-card rv rv2">
+        <div class="menu-img"><img src="bowls/brasileiro.jpg" alt="Brasileiro" loading="lazy" decoding="async"></div>
+        <div class="menu-body">
+          <div class="menu-name">Brasileiro</div>
+          <div class="menu-prices">M €8,10 <span>·</span> G €10,50</div>
+        </div>
+      </div>
+      <div class="menu-card rv rv3">
+        <div class="menu-img"><img src="bowls/dubai.jpg" alt="Dubai" loading="lazy" decoding="async"></div>
+        <div class="menu-body">
+          <div class="menu-name">Dubai</div>
+          <div class="menu-prices">M €8,10 <span>·</span> G €10,50</div>
+        </div>
+      </div>
+      <div class="menu-card rv">
+        <div class="menu-img"><img src="bowls/gymbro.jpg" alt="Gym Bro" loading="lazy" decoding="async"></div>
+        <div class="menu-body">
+          <div class="menu-name">Gym Bro</div>
+          <div class="menu-prices">M €8,10 <span>·</span> G €10,50</div>
+        </div>
+      </div>
+      <div class="menu-card rv rv1">
+        <div class="menu-img"><img src="bowls/low calorie.jpg" alt="Low Calorie" loading="lazy" decoding="async"></div>
+        <div class="menu-body">
+          <div class="menu-name">Low Calorie</div>
+          <div class="menu-prices">M €8,10 <span>·</span> G €10,50</div>
+        </div>
+      </div>
+      <div class="menu-card rv rv2">
+        <div class="menu-img"><img src="bowls/sweet boom.jpg" alt="Sweet Boom" loading="lazy" decoding="async"></div>
+        <div class="menu-body">
+          <div class="menu-name">Sweet Boom</div>
+          <div class="menu-prices">M €8,10 <span>·</span> G €10,50</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- =============================================
+     SIGNATURE BOWLS — SCROLL VIDEO
+============================================= -->
+<section class="bowls-scroll-section" id="bowls">
+  <div class="bowls-sticky" id="bss">
+
+    <div class="bowls-bg"></div>
+    <canvas id="sv2"></canvas>
+    <div class="bowls-overlay"></div>
+
+    <!-- Top-left intro -->
+    <div class="bowls-top-label" id="bowlsIntro">
+      <h2>NUESTRAS<br><span class="pk">BEBIDAS</span></h2>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- =============================================
+     BEBIDAS
+============================================= -->
+<section class="drinks-section" id="drinks">
+
+  <div class="drinks-sec-head rv">
+    <span class="tag-label">Para beber</span>
+    <h2>MATCHA &<br><span class="pk">LATTES</span></h2>
+  </div>
+
+  <!-- MATCHA -->
+  <div class="drink-category">
+    <div class="drink-cat-header rv">
+      <span class="drink-cat-label">Matcha <span class="pk">Ceremonial</span></span>
+      <div class="drink-cat-line"></div>
+      <span class="drink-cat-pill">7 variedades</span>
+    </div>
+    <div class="drink-grid">
+      <div class="drink-card rv">
+        <div class="drink-img"><img src="bebidas/classic matcha.jpg" alt="Classic Matcha" loading="lazy" decoding="async"></div>
+        <div class="drink-body"><div class="drink-name">Classic Matcha</div></div>
+      </div>
+      <div class="drink-card rv rv1">
+        <div class="drink-img"><img src="bebidas/coco cloude.jpg" alt="Coco Cloud" loading="lazy" decoding="async"></div>
+        <div class="drink-body"><div class="drink-name">Coco Cloud</div></div>
+      </div>
+      <div class="drink-card rv rv2">
+        <div class="drink-img"><img src="bebidas/mango matcha.jpg" alt="Mango Matcha" loading="lazy" decoding="async"></div>
+        <div class="drink-body"><div class="drink-name">Mango Matcha</div></div>
+      </div>
+      <div class="drink-card rv rv3">
+        <div class="drink-img"><img src="bebidas/matcha pistacho.jpg" alt="Matcha Pistacho" loading="lazy" decoding="async"></div>
+        <div class="drink-body"><div class="drink-name">Matcha Pistacho</div></div>
+      </div>
+      <div class="drink-card rv">
+        <div class="drink-img"><img src="bebidas/strawbeey bliss.jpg" alt="Strawberry Bliss" loading="lazy" decoding="async"></div>
+        <div class="drink-body"><div class="drink-name">Strawberry Bliss</div></div>
+      </div>
+      <div class="drink-card rv rv1">
+        <div class="drink-img"><img src="bebidas/banana pudding.jpg" alt="Banana Pudding" loading="lazy" decoding="async"></div>
+        <div class="drink-body"><div class="drink-name">Banana Pudding</div></div>
+      </div>
+      <div class="drink-card rv rv2">
+        <div class="drink-img"><img src="bebidas/mango sticky rice.jpg" alt="Mango Sticky Rice" loading="lazy" decoding="async"></div>
+        <div class="drink-body"><div class="drink-name">Mango Sticky Rice</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CAFÉ -->
+  <div class="drink-category">
+    <div class="drink-cat-header rv">
+      <span class="drink-cat-label">Iced <span class="pk">Lattes</span></span>
+      <div class="drink-cat-line"></div>
+      <span class="drink-cat-pill">5 variedades</span>
+    </div>
+    <div class="drink-grid">
+      <div class="drink-card rv">
+        <div class="drink-img"><img src="bebidas/classic latte.jpg" alt="Classic Latte" loading="lazy" decoding="async"></div>
+        <div class="drink-body"><div class="drink-name">Classic Latte</div></div>
+      </div>
+      <div class="drink-card rv rv1">
+        <div class="drink-img"><img src="bebidas/vainilla late.jpg" alt="Vainilla Latte" loading="lazy" decoding="async"></div>
+        <div class="drink-body"><div class="drink-name">Vainilla Latte</div></div>
+      </div>
+      <div class="drink-card rv rv2">
+        <div class="drink-img"><img src="bebidas/salted caramel.jpg" alt="Salted Caramel" loading="lazy" decoding="async"></div>
+        <div class="drink-body"><div class="drink-name">Salted Caramel</div></div>
+      </div>
+      <div class="drink-card rv rv3">
+        <div class="drink-img"><img src="bebidas/chai latte.jpg" alt="Chai Latte" loading="lazy" decoding="async"></div>
+        <div class="drink-body"><div class="drink-name">Chai Latte</div></div>
+      </div>
+      <div class="drink-card rv">
+        <div class="drink-img"><img src="bebidas/cookies and cream.jpg" alt="Cookies and Cream" loading="lazy" decoding="async"></div>
+        <div class="drink-body"><div class="drink-name">Cookies and Cream</div></div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-logo">Santtru.</span>
+  <span class="footer-copy">© 2026 Santtru · Barcelona</span>
+  <a href="https://instagram.com/santtru.club" class="footer-ig">@santtru.club</a>
+</footer>
+
+<script>
+// ── CURSOR ──────────────────────────────────
+const cur = document.getElementById('cur');
+const curR = document.getElementById('cur-r');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+(function loop(){rx+=(mx-rx)*.11;ry+=(my-ry)*.11;curR.style.left=rx+'px';curR.style.top=ry+'px';requestAnimationFrame(loop);})();
+document.querySelectorAll('a,button').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cur.style.width='20px';cur.style.height='20px';curR.style.width='52px';curR.style.height='52px';cur.style.background='var(--pink-d)';});
+  el.addEventListener('mouseleave',()=>{cur.style.width='10px';cur.style.height='10px';curR.style.width='36px';curR.style.height='36px';cur.style.background='var(--pink)';});
+});
+
+// ── REVEAL ──────────────────────────────────
+document.querySelectorAll('.rv').forEach(el=>{
+  new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('on');});},{threshold:.1}).observe(el);
+});
+
+// ── BOWL TABS ────────────────────────────────
+function switchBowlTab(id, btn) {
+  document.querySelectorAll('.bowl-pane').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.bowl-tab').forEach(b => b.classList.remove('on'));
+  document.getElementById('bp-' + id).classList.add('on');
+  btn.classList.add('on');
+}
+
+
+// ── CANVAS FRAME SCRUBBING — HERO ────────────
+const canvas    = document.getElementById('sv');
+const ctx       = canvas.getContext('2d');
+const section   = document.getElementById('hero');
+const prog      = document.getElementById('prog');
+const svt       = document.getElementById('svt');
+const svTitle   = document.getElementById('svTitle');
+const heroIntro = document.getElementById('heroIntro');
+const scrollHint= document.getElementById('scrollHint');
+const loaderEl  = document.getElementById('frameLoader');
+const loaderFill= document.getElementById('loaderFill');
+
+const TOTAL  = 169;
+const images = new Array(TOTAL);
+let loadedCount  = 0;
+let ready        = false;
+let currentFrame = -1;
+
+const phases = [
+  {t:'PURO<br><span class="accent">AÇAÍ</span>'},
+  {t:'FRESCURA<br><span class="accent">REAL</span>'},
+  {t:'EL CRUNCH<br><span class="accent">PERFECTO</span>'},
+  {t:'SABOR<br><span class="accent">ÚNICO</span>'},
+  {t:'LISTO<br><span class="accent">PARA TI</span>'},
+];
+let lastPhase = -1;
+
+function resizeCanvas(){
+  const dpr = Math.min(window.devicePixelRatio || 1, 3);
+  const w = window.innerWidth, h = window.innerHeight;
+  canvas.width  = Math.round(w * dpr);
+  canvas.height = Math.round(h * dpr);
+  canvas.style.width  = w + 'px';
+  canvas.style.height = h + 'px';
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+  drawFrame(currentFrame < 0 ? 0 : currentFrame);
+}
+
+function drawFrame(index){
+  if(index < 0 || index >= TOTAL) return;
+  const img = images[index];
+  if(!img || !img.complete || !img.naturalWidth) return;
+  const cw=canvas.width, ch=canvas.height;
+  const iw=img.naturalWidth, ih=img.naturalHeight;
+  const scale=Math.max(cw/iw, ch/ih);
+  const dw=Math.round(iw*scale), dh=Math.round(ih*scale);
+  ctx.clearRect(0,0,cw,ch);
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(img, Math.round((cw-dw)/2), Math.round((ch-dh)/2), dw, dh);
+}
+
+for(let i=0;i<TOTAL;i++){
+  const img=new Image();
+  img.decoding='async';
+  img.fetchPriority = i < 10 ? 'high' : 'auto';
+  const n=String(i+1).padStart(3,'0');
+  img.src='frames2/frame-'+n+'.jpg';
+  img.onload=()=>{
+    loadedCount++;
+    if(loaderFill) loaderFill.style.width=(loadedCount/TOTAL*100)+'%';
+    if(loadedCount===1){ ready=true; resizeCanvas(); canvas.classList.add('rdy'); }
+    if(loadedCount===TOTAL && loaderEl) loaderEl.classList.add('done');
+  };
+  images[i]=img;
+}
+
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+function setPhase(i){
+  if(i===lastPhase) return;
+  lastPhase=i;
+  svTitle.style.opacity='0'; svTitle.style.transform='translateY(12px)';
+  setTimeout(()=>{
+    svTitle.innerHTML=phases[i].t;
+    svTitle.style.opacity='1'; svTitle.style.transform='translateY(0)';
+    svTitle.style.transition='opacity .4s,transform .4s';
+  },180);
+}
+
+let rafPending = false;
+function onScroll(){
+  if(rafPending) return;
+  rafPending = true;
+  requestAnimationFrame(()=>{
+    rafPending = false;
+    const rect   = section.getBoundingClientRect();
+    const total  = section.offsetHeight - window.innerHeight;
+    const p = Math.max(0, Math.min(1, -rect.top / total));
+
+    prog.style.width=(p*100)+'%';
+
+    if(ready){
+      const fi = Math.min(Math.round(p*(TOTAL-1)), TOTAL-1);
+      if(fi !== currentFrame){ currentFrame=fi; drawFrame(fi); }
+    }
+
+    if(p>.04){ scrollHint.classList.add('hide'); }
+    else      { scrollHint.classList.remove('hide'); }
+
+    if(p>.04) svt.classList.add('on');
+    else      svt.classList.remove('on');
+
+    setPhase(Math.min(Math.floor(p*phases.length), phases.length-1));
+  });
+}
+
+window.addEventListener('scroll', onScroll, {passive:true});
+onScroll();
+
+// ── CANVAS FRAME SCRUBBING — BEBIDAS ────────
+const canvas2    = document.getElementById('sv2');
+const ctx2       = canvas2.getContext('2d');
+const bSection   = document.getElementById('bowls');
+const bowlsIntro = document.getElementById('bowlsIntro');
+
+const BTOTAL  = 169;
+const bImages = new Array(BTOTAL);
+let bLoadedCount  = 0;
+let bReady        = false;
+let bCurrentFrame = -1;
+
+function resizeCanvas2(){
+  const dpr = Math.min(window.devicePixelRatio || 1, 3);
+  const w = window.innerWidth, h = window.innerHeight;
+  canvas2.width  = Math.round(w * dpr);
+  canvas2.height = Math.round(h * dpr);
+  canvas2.style.width  = w + 'px';
+  canvas2.style.height = h + 'px';
+  ctx2.imageSmoothingEnabled = true;
+  ctx2.imageSmoothingQuality = 'high';
+  drawFrame2(bCurrentFrame < 0 ? 0 : bCurrentFrame);
+}
+
+function drawFrame2(index){
+  if(index < 0 || index >= BTOTAL) return;
+  const img = bImages[index];
+  if(!img || !img.complete || !img.naturalWidth) return;
+  const cw=canvas2.width, ch=canvas2.height;
+  const iw=img.naturalWidth, ih=img.naturalHeight;
+  const scale=Math.max(cw/iw, ch/ih);
+  const dw=Math.round(iw*scale), dh=Math.round(ih*scale);
+  ctx2.clearRect(0,0,cw,ch);
+  ctx2.imageSmoothingEnabled = true;
+  ctx2.imageSmoothingQuality = 'high';
+  ctx2.drawImage(img, Math.round((cw-dw)/2), Math.round((ch-dh)/2), dw, dh);
+}
+
+for(let i=0;i<BTOTAL;i++){
+  const img=new Image();
+  img.decoding='async';
+  img.fetchPriority = i < 10 ? 'high' : 'auto';
+  const n=String(i+1).padStart(3,'0');
+  img.src='frames3/frame-'+n+'.jpg';
+  img.onload=()=>{
+    bLoadedCount++;
+    if(bLoadedCount===1){ bReady=true; resizeCanvas2(); canvas2.classList.add('rdy'); }
+  };
+  bImages[i]=img;
+}
+
+window.addEventListener('resize', resizeCanvas2);
+resizeCanvas2();
+
+let bRafPending = false;
+function onBScroll(){
+  if(bRafPending) return;
+  bRafPending = true;
+  requestAnimationFrame(()=>{
+    bRafPending = false;
+    const rect  = bSection.getBoundingClientRect();
+    const total = bSection.offsetHeight - window.innerHeight;
+    const p = Math.max(0, Math.min(1, -rect.top / total));
+
+    if(bReady){
+      const fi = Math.min(Math.round(p*(BTOTAL-1)), BTOTAL-1);
+      if(fi !== bCurrentFrame){ bCurrentFrame=fi; drawFrame2(fi); }
+    }
+
+  });
+}
+
+window.addEventListener('scroll', onBScroll, {passive:true});
+onBScroll();
+</script>
+</body>
+</html>
