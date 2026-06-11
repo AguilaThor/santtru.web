@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -27,6 +27,11 @@ body {
   font-family: 'Poppins', sans-serif;
   overflow-x: hidden;
   cursor: none;
+}
+@media (hover: none) {
+  body { cursor: auto; }
+  #cur, #cur-r { display: none !important; }
+  * { cursor: auto !important; }
 }
 
 /* ── CURSOR ─────────────────────────── */
@@ -360,6 +365,8 @@ footer {
   .nosotros-top { grid-template-columns:1fr; gap:3rem; }
   footer { flex-direction:column; gap:1rem; text-align:center; }
   .hero-landing-inner { left:0; right:0; justify-content:center; }
+  .scroll-section { height:240vh; }
+  .bowls-scroll-section { height:240vh; }
 }
 @media(max-width:600px) {
   .hero-landing { min-height:55vw; }
@@ -478,16 +485,19 @@ footer {
 </footer>
 
 <script>
-// ── CURSOR ──────────────────────────────────
+// ── CURSOR (solo desktop) ────────────────────
+const isTouchDevice = window.matchMedia('(hover: none)').matches;
 const cur = document.getElementById('cur');
 const curR = document.getElementById('cur-r');
-let mx=0,my=0,rx=0,ry=0;
-document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
-(function loop(){rx+=(mx-rx)*.11;ry+=(my-ry)*.11;curR.style.left=rx+'px';curR.style.top=ry+'px';requestAnimationFrame(loop);})();
-document.querySelectorAll('a,button').forEach(el=>{
-  el.addEventListener('mouseenter',()=>{cur.style.width='20px';cur.style.height='20px';curR.style.width='52px';curR.style.height='52px';cur.style.background='var(--pink-d)';});
-  el.addEventListener('mouseleave',()=>{cur.style.width='10px';cur.style.height='10px';curR.style.width='36px';curR.style.height='36px';cur.style.background='var(--pink)';});
-});
+if (!isTouchDevice) {
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+  (function loop(){rx+=(mx-rx)*.11;ry+=(my-ry)*.11;curR.style.left=rx+'px';curR.style.top=ry+'px';requestAnimationFrame(loop);})();
+  document.querySelectorAll('a,button').forEach(el=>{
+    el.addEventListener('mouseenter',()=>{cur.style.width='20px';cur.style.height='20px';curR.style.width='52px';curR.style.height='52px';cur.style.background='var(--pink-d)';});
+    el.addEventListener('mouseleave',()=>{cur.style.width='10px';cur.style.height='10px';curR.style.width='36px';curR.style.height='36px';cur.style.background='var(--pink)';});
+  });
+}
 
 // ── HAMBURGER ────────────────────────────────
 const burger = document.getElementById('burger');
@@ -561,19 +571,22 @@ window.addEventListener('resize',resizeCanvas);
 resizeCanvas();
 
 
-let rafPending=false;
+let targetFrameF=0, smoothFrameF=0, loopRunning=false;
+function animLoop(){
+  const diff=targetFrameF-smoothFrameF;
+  smoothFrameF+=diff*0.18;
+  const fi=Math.min(Math.round(smoothFrameF),TOTAL-1);
+  if(fi!==currentFrame&&ready){currentFrame=fi;drawFrame(fi);}
+  if(Math.abs(diff)>0.3){ requestAnimationFrame(animLoop); } else { smoothFrameF=targetFrameF; loopRunning=false; }
+}
 function onScroll(){
-  if(rafPending) return;
-  rafPending=true;
-  requestAnimationFrame(()=>{
-    rafPending=false;
-    const rect=section.getBoundingClientRect();
-    const total=section.offsetHeight-window.innerHeight;
-    const p=Math.max(0,Math.min(1,-rect.top/total));
-    if(ready){ const fi=Math.min(Math.round(p*(TOTAL-1)),TOTAL-1); if(fi!==currentFrame){currentFrame=fi;drawFrame(fi);} }
-if(p>0.82) acaiCta.classList.add('show');
-    else       acaiCta.classList.remove('show');
-  });
+  const rect=section.getBoundingClientRect();
+  const total=section.offsetHeight-window.innerHeight;
+  const p=Math.max(0,Math.min(1,-rect.top/total));
+  targetFrameF=p*(TOTAL-1);
+  if(!loopRunning){loopRunning=true;requestAnimationFrame(animLoop);}
+  if(p>0.82) acaiCta.classList.add('show');
+  else       acaiCta.classList.remove('show');
 }
 window.addEventListener('scroll',onScroll,{passive:true});
 onScroll();
@@ -617,22 +630,27 @@ for(let i=0;i<BTOTAL;i++){
 window.addEventListener('resize',resizeCanvas2);
 resizeCanvas2();
 
-let bRafPending=false;
+let bTargetFrameF=0, bSmoothFrameF=0, bLoopRunning=false;
+function bAnimLoop(){
+  const diff=bTargetFrameF-bSmoothFrameF;
+  bSmoothFrameF+=diff*0.18;
+  const fi=Math.min(Math.round(bSmoothFrameF),BTOTAL-1);
+  if(fi!==bCurrentFrame&&bReady){bCurrentFrame=fi;drawFrame2(fi);}
+  if(Math.abs(diff)>0.3){ requestAnimationFrame(bAnimLoop); } else { bSmoothFrameF=bTargetFrameF; bLoopRunning=false; }
+}
 function onBScroll(){
-  if(bRafPending) return;
-  bRafPending=true;
-  requestAnimationFrame(()=>{
-    bRafPending=false;
-    const rect=bSection.getBoundingClientRect();
-    const total=bSection.offsetHeight-window.innerHeight;
-    const p=Math.max(0,Math.min(1,-rect.top/total));
-    if(bReady){ const fi=Math.min(Math.round(p*(BTOTAL-1)),BTOTAL-1); if(fi!==bCurrentFrame){bCurrentFrame=fi;drawFrame2(fi);} }
-    if(p>0.82) bebidasCta.classList.add('show');
-    else       bebidasCta.classList.remove('show');
-  });
+  const rect=bSection.getBoundingClientRect();
+  const total=bSection.offsetHeight-window.innerHeight;
+  const p=Math.max(0,Math.min(1,-rect.top/total));
+  bTargetFrameF=p*(BTOTAL-1);
+  if(!bLoopRunning){bLoopRunning=true;requestAnimationFrame(bAnimLoop);}
+  if(p>0.82) bebidasCta.classList.add('show');
+  else       bebidasCta.classList.remove('show');
 }
 window.addEventListener('scroll',onBScroll,{passive:true});
 onBScroll();
 </script>
 </body>
 </html>
+
+

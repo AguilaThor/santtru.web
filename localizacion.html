@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -22,6 +22,11 @@ body {
   font-family: 'Poppins', sans-serif;
   overflow-x: hidden;
   cursor: none;
+}
+@media (hover: none) {
+  body { cursor: auto; }
+  #cur, #cur-r { display: none !important; }
+  * { cursor: auto !important; }
 }
 
 /* ── CURSOR ─────────────────────────── */
@@ -106,7 +111,7 @@ nav::before {
 .loc-header h1 {
   font-family: 'League Spartan', sans-serif;
   font-weight: 900;
-  font-size: clamp(3.5rem, 8vw, 8rem);
+  font-size: clamp(2.2rem, 8vw, 8rem);
   line-height: .9;
   text-transform: uppercase;
   letter-spacing: -.03em;
@@ -133,7 +138,7 @@ nav::before {
   max-width: 560px;
   height: 520px;
   object-fit: cover;
-  object-position: center 15%;
+  object-position: center 5%;
   display: block;
 }
 
@@ -219,6 +224,7 @@ footer {
   .loc-header { padding:8rem 1.5rem 3rem; }
   .loc-body { grid-template-columns:1fr; }
   .loc-image-col { padding:3rem 1.5rem; border-right:none; border-bottom:1px solid rgba(30,30,30,.08); }
+  .loc-image-col img { height:400px; object-position:center 0%; }
   .loc-item { padding:3rem 1.5rem; }
   footer { flex-direction:column; gap:1rem; text-align:center; }
 }
@@ -271,7 +277,7 @@ footer {
 
     <div class="loc-item rv">
       <span class="loc-num">01</span>
-      <h2 class="loc-name">Valldoreix</h2>
+      <h2 class="loc-name">Sant Cugat</h2>
       <p class="loc-address">
         Carrer de Valldoreix, 3<br>
         Sant Cugat del Vallès, Barcelona
@@ -304,16 +310,19 @@ footer {
 </footer>
 
 <script>
-// ── CURSOR
+// ── CURSOR (solo desktop)
+const isTouchDevice=window.matchMedia('(hover: none)').matches;
 const cur = document.getElementById('cur');
 const curR = document.getElementById('cur-r');
-let mx=0,my=0,rx=0,ry=0;
-document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
-(function loop(){rx+=(mx-rx)*.11;ry+=(my-ry)*.11;curR.style.left=rx+'px';curR.style.top=ry+'px';requestAnimationFrame(loop);})();
-document.querySelectorAll('a,button').forEach(el=>{
-  el.addEventListener('mouseenter',()=>{cur.style.width='20px';cur.style.height='20px';curR.style.width='52px';curR.style.height='52px';cur.style.background='var(--pink-d)';});
-  el.addEventListener('mouseleave',()=>{cur.style.width='10px';cur.style.height='10px';curR.style.width='36px';curR.style.height='36px';cur.style.background='var(--pink)';});
-});
+if(!isTouchDevice){
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+  (function loop(){rx+=(mx-rx)*.11;ry+=(my-ry)*.11;curR.style.left=rx+'px';curR.style.top=ry+'px';requestAnimationFrame(loop);})();
+  document.querySelectorAll('a,button').forEach(el=>{
+    el.addEventListener('mouseenter',()=>{cur.style.width='20px';cur.style.height='20px';curR.style.width='52px';curR.style.height='52px';cur.style.background='var(--pink-d)';});
+    el.addEventListener('mouseleave',()=>{cur.style.width='10px';cur.style.height='10px';curR.style.width='36px';curR.style.height='36px';cur.style.background='var(--pink)';});
+  });
+}
 
 // ── HAMBURGER
 const burger = document.getElementById('burger');
@@ -338,3 +347,6 @@ document.querySelectorAll('.rv').forEach(el=>{
 </script>
 </body>
 </html>
+
+
+
