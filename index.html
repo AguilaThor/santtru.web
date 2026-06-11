@@ -4,7 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Santtru — Açaí & Wellness Sant Cugat del Vallès</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=League+Spartan:wght@300;400;600;700;900&family=Poppins:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@300;400;600;700;900&family=Poppins:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="portada.jpg">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 
@@ -429,7 +432,7 @@ footer {
     </div>
 
     <div class="nosotros-photo rv rv1">
-      <img src="nosotros.jpg" alt="Santtru">
+      <img src="nosotros.jpg" alt="Santtru" loading="lazy" decoding="async">
     </div>
 
   </div>
@@ -559,14 +562,19 @@ function drawFrame(index){
   ctx.imageSmoothingEnabled=true; ctx.imageSmoothingQuality='high';
   ctx.drawImage(img,Math.round((cw-dw)/2),Math.round((ch-dh)/2),dw,dh);
 }
-for(let i=0;i<TOTAL;i++){
-  const img=new Image();
-  img.decoding='async';
-  img.fetchPriority=i<10?'high':'auto';
+function loadFrame(i){
+  const img=new Image(); img.decoding='async';
   img.src='frames2/frame-'+String(i+1).padStart(3,'0')+'.jpg';
   img.onload=()=>{ loadedCount++; if(loadedCount===1){ready=true;resizeCanvas();canvas.classList.add('rdy');} };
   images[i]=img;
 }
+loadFrame(0);
+let acaiFramesLoaded=false;
+new IntersectionObserver((entries)=>{
+  if(!entries[0].isIntersecting||acaiFramesLoaded) return;
+  acaiFramesLoaded=true;
+  for(let i=1;i<TOTAL;i++) loadFrame(i);
+},{rootMargin:'300px'}).observe(section);
 window.addEventListener('resize',resizeCanvas);
 resizeCanvas();
 
@@ -619,14 +627,19 @@ function drawFrame2(index){
   ctx2.imageSmoothingEnabled=true; ctx2.imageSmoothingQuality='high';
   ctx2.drawImage(img,Math.round((cw-dw)/2),Math.round((ch-dh)/2),dw,dh);
 }
-for(let i=0;i<BTOTAL;i++){
-  const img=new Image();
-  img.decoding='async';
-  img.fetchPriority=i<10?'high':'auto';
+function loadBFrame(i){
+  const img=new Image(); img.decoding='async';
   img.src='frames3/frame-'+String(i+1).padStart(3,'0')+'.jpg';
   img.onload=()=>{ bLoadedCount++; if(bLoadedCount===1){bReady=true;resizeCanvas2();canvas2.classList.add('rdy');} };
   bImages[i]=img;
 }
+loadBFrame(0);
+let bebidasFramesLoaded=false;
+new IntersectionObserver((entries)=>{
+  if(!entries[0].isIntersecting||bebidasFramesLoaded) return;
+  bebidasFramesLoaded=true;
+  for(let i=1;i<BTOTAL;i++) loadBFrame(i);
+},{rootMargin:'300px'}).observe(bSection);
 window.addEventListener('resize',resizeCanvas2);
 resizeCanvas2();
 
