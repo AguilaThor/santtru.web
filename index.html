@@ -245,7 +245,6 @@ nav::before {
 }
 .scroll-bg {
   position:absolute; inset:0;
-  background: var(--dark);
 }
 #sv {
   position:absolute; inset:0; width:100%; height:100%;
@@ -282,7 +281,6 @@ nav::before {
 }
 .bowls-bg {
   position:absolute; inset:0;
-  background:linear-gradient(to bottom,#1e1e1e 0%,#2a1a1a 100%);
 }
 #sv2 {
   position:absolute; inset:0; width:100%; height:100%;
@@ -568,13 +566,13 @@ function loadFrame(i){
   img.onload=()=>{ loadedCount++; if(loadedCount===1){ready=true;resizeCanvas();canvas.classList.add('rdy');} };
   images[i]=img;
 }
-loadFrame(0);
+for(let i=0;i<8;i++) loadFrame(i);
 let acaiFramesLoaded=false;
 new IntersectionObserver((entries)=>{
   if(!entries[0].isIntersecting||acaiFramesLoaded) return;
   acaiFramesLoaded=true;
-  for(let i=1;i<TOTAL;i++) loadFrame(i);
-},{rootMargin:'300px'}).observe(section);
+  for(let i=8;i<TOTAL;i++) loadFrame(i);
+},{rootMargin:'400px'}).observe(section);
 window.addEventListener('resize',resizeCanvas);
 resizeCanvas();
 
@@ -582,7 +580,7 @@ resizeCanvas();
 let targetFrameF=0, smoothFrameF=0, loopRunning=false;
 function animLoop(){
   const diff=targetFrameF-smoothFrameF;
-  smoothFrameF+=diff*0.18;
+  smoothFrameF+=diff*0.13;
   const fi=Math.min(Math.round(smoothFrameF),TOTAL-1);
   if(fi!==currentFrame&&ready){currentFrame=fi;drawFrame(fi);}
   if(Math.abs(diff)>0.3){ requestAnimationFrame(animLoop); } else { smoothFrameF=targetFrameF; loopRunning=false; }
@@ -633,13 +631,13 @@ function loadBFrame(i){
   img.onload=()=>{ bLoadedCount++; if(bLoadedCount===1){bReady=true;resizeCanvas2();canvas2.classList.add('rdy');} };
   bImages[i]=img;
 }
-loadBFrame(0);
+for(let i=0;i<8;i++) loadBFrame(i);
 let bebidasFramesLoaded=false;
 new IntersectionObserver((entries)=>{
   if(!entries[0].isIntersecting||bebidasFramesLoaded) return;
   bebidasFramesLoaded=true;
-  for(let i=1;i<BTOTAL;i++) loadBFrame(i);
-},{rootMargin:'300px'}).observe(bSection);
+  for(let i=8;i<BTOTAL;i++) loadBFrame(i);
+},{rootMargin:'400px'}).observe(bSection);
 window.addEventListener('resize',resizeCanvas2);
 resizeCanvas2();
 
